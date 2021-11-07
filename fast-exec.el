@@ -42,17 +42,10 @@
     )
 
 
-(defcustom fast-exec/completion-system 'auto
-  "The completion system to be used by executing command.
-Code taked from projectile (https://github.com/bbatsov/projectile)."
-  :group 'projectile
-  :type '(radio
-          (const :tag "Auto-detect" auto)
-          (const :tag "Ido" ido)
-          (const :tag "Helm" helm)
-          (const :tag "Ivy" ivy)
-          (const :tag "Default" default)
-          (function :tag "Custom function")))
+(defcustom fast-exec/buffer-name "*fast-exec view candidates to run command*"
+  "Name of buffer that created for asking user char of word of command."
+  :group 'fast-exec
+  :type 'string)
 
 
 (defcustom fast-exec/commands-and-names nil
@@ -99,7 +92,7 @@ FULL COMMAND is command function and list of char for type and words for view."
 
 
 (defun fast-exec/add-command (command-name command)
-    "Add command `COMMAND` with name `COMMAND-NAME` to `fast-exec` commands list.
+"Add command `COMMAND` with name `COMMAND-NAME` to `fast-exec` commands lists.
 WARNING! be caruful with case of `COMMAND-NAME` words of name in first lower
 character will ignored as unnecassary."
     (add-to-list 'fast-exec/commands-and-names '(command command-name))
@@ -115,54 +108,6 @@ character will ignored as unnecassary."
                      (list
                       command
                       (-zip chars-of-command-important-parts command-important-parts)))))
-
-
-(cl-defun fast-exec/*completing-read* (prompt choices &key initial-input action)
-    "Present a project tailored `PROMPT` with `CHOICES`.
-Code taked from projectile (https://github.com/bbatsov/projectile)."
-    (let (res)
-        (setq res
-              (pcase (if (eq fast-exec/completion-system 'auto)
-                         (cond
-                           ((bound-and-true-p ido-mode)  'ido)
-                           ((bound-and-true-p helm-mode) 'helm)
-                           ((bound-and-true-p ivy-mode)  'ivy)
-                           (t 'default))
-                         fast-exec/completion-system)
-                  ('default (completing-read prompt choices nil nil initial-input))
-                  ('ido (ido-completing-read prompt choices nil nil initial-input))
-                  ('helm
-                   (if (and (fboundp 'helm)
-                            (fboundp 'helm-make-source))
-                       (helm :sources
-                             (helm-make-source "Fast Exec" 'helm-source-sync
-                                 :candidates choices
-                                 :action (if action
-                                             (prog1 action
-                                                 (setq action nil))
-                                             #'identity))
-                             :prompt prompt
-                             :input initial-input
-                             :buffer "*helm-fast-exec*")
-                       (user-error "Please install helm")))
-                  ('ivy
-                   (if (fboundp 'ivy-read)
-                       (ivy-read prompt choices
-                                 :initial-input initial-input
-                                 :action (prog1 action
-                                             (setq action nil))
-                                 :caller 'fast-exec/completing-read)
-                       (user-error "Please install ivy")))
-                  (_ (funcall fast-exec/*completing-read* prompt choices))))
-        (if action
-            (funcall action res)
-            res)))
-
-
-(defun fast-exec/*completing-read-char* (prompt chars)
-    "User type character with `fast-exec/completion-system` from `CHARS`, and call `ACTION`."
-    (string-to-char (fast-exec/*completing-read* prompt (-map 'char-to-string chars)))
-    )
 
 
 (defun fast-exec/*full-command-nth-char-and-word* (command n)
@@ -198,6 +143,73 @@ Code taked from projectile (https://github.com/bbatsov/projectile)."
     )
 
 
+(defun fast-exec/*nth-words-of-full-commands* (commands n)
+    "Return first characters of `N`-th words of `COMMANDS`' names."
+    (--map
+     (fast-exec/*full-command-nth-word* it n)
+     commands)
+    )
+
+
+(defun fast-exec/*to-string-nth-char-and-full-commands* (char-and-full-commands n)
+    "To string grouped by character of `N`-th word of name `full-commands`."
+
+    (let* ((char-as-str (char-to-string (-first-item char-and-full-commands)))
+           (full-commands (cdr char-and-full-commands))
+           (nth-words-of-commands (fast-exec/*nth-words-of-full-commands* full-commands n))
+           (joined-nth-words (fast-exec/*join-strings* " | " nth-words-of-commands)))
+        (s-lex-format "${char-as-str}                                 ${joined-nth-words}"))
+    )
+
+
+(defun fast-exec/*to-string-groups-by-nth-char-full-commands* (groups n)
+    "To string groups grouped by character of `N`-th word of name `full-commands`."
+    
+    (--map (fast-exec/*to-string-nth-char-and-full-commands* it n)
+           groups)
+    )
+
+
+(defun fast-exec/*to-string-full-commands-as-candidates-with-nth-chars* (full-commands n)
+    "To str `FULL-COMMANDS` as candidates for typing `N`-th char of commands' names.."
+
+    (s-join "\n"
+            (fast-exec/*to-string-groups-by-nth-char-full-commands*
+             (--group-by (fast-exec/*full-command-nth-char* it n) full-commands)
+             n))
+    )
+
+
+(defun fast-exec/*insert-full-commands-as-candidates-with-nth-chars* (full-commands n)
+    "Insert `FULL-COMMANDS` as candidates for typing `N`-th char of commands' names.."
+    (insert (fast-exec/*to-string-full-commands-as-candidates-with-nth-chars* full-commands n))
+    )
+
+
+(defun fast-exec/*view-full-commands-as-candidates-with-nth-chars-in-new-buffer*
+    (full-commands n)
+    "View `FULL-COMMANDS` as candidates with `N`-th character.
+For executing in `fast-exec/exec` command."
+    (let ((new-buffer (generate-new-buffer fast-exec/buffer-name))
+          (inhibit-read-only t))
+        (progn
+            (switch-to-buffer new-buffer)
+            (funcall 'org-mode)
+            (fast-exec/*insert-full-commands-as-candidates-with-nth-chars* full-commands n)))
+    )
+
+
+(defun fast-exec/*completing-read-full-command-nth-part* (prompt candidates n)
+    "Read `full-command`'s `N`-th chars from user's minibufer from `CANDIDATES` with `PROMPT`."
+    (setq fast-exec/*char-of-user* nil)
+    (fast-exec/*view-full-commands-as-candidates-with-nth-chars-in-new-buffer* candidates n)
+    (let ((candidates-chars (fast-exec/*nth-chars-of-full-commands* candidates n)))
+        (while (not (-contains? candidates-chars fast-exec/*char-of-user*))
+            (setq fast-exec/*char-of-user* (read-char))
+            (kill-buffer fast-exec/buffer-name)))
+    fast-exec/*char-of-user*)
+
+
 (defun fast-exec/*full-command-only-command* (full-command)
     "Return `command-function` of `FULL-COMMAND`."
     (-first-item full-command))
@@ -222,9 +234,8 @@ Code taked from projectile (https://github.com/bbatsov/projectile)."
     (setq full-commands (or full-commands fast-exec/full-commands))
     (setq typed-chars-num (or typed-chars-num 0))
     (setq char-of-command-word
-          (fast-exec/*completing-read-char*
-           "Enter Character, Please (: "
-           (fast-exec/*nth-chars-of-full-commands* full-commands typed-chars-num)))
+          (fast-exec/*completing-read-full-command-nth-part*
+           "Enter Character, Please (: " full-commands typed-chars-num))
 
     (let ((suitable-full-commands
            (fast-exec/*full-commands-with-excepted-nth-char*
