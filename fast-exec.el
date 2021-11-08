@@ -1,6 +1,6 @@
-;;; package --- fast-exec
+;;; fast-exec --- Very Fast Executing Emacs Commands
 
-;; Copyright (C) 2013-2021 Free Software Foundation, Inc.
+;; Copyright (C) 2021 Free Software Foundation, Inc.
 
 ;; Author: semenInRussia <hrams205@gmail.com>
 ;; Version: 0.0.1
@@ -102,12 +102,19 @@ character will ignored as unnecassary."
                         (command-important-parts
                          (--map
                           (fast-exec/*join-strings* " " it)
-                          (-partition-after-pred 'fast-exec/*first-letter-upper-p* command-words)))
+                          (-partition-before-pred 'fast-exec/*first-letter-upper-p* command-words)))
                         (chars-of-command-important-parts
                          (--map (string-to-char (s-downcase it)) command-important-parts)))
                      (list
                       command
                       (-zip chars-of-command-important-parts command-important-parts)))))
+
+
+(defmacro fast-exec/add-some-commands (&rest names-and-commands)
+    "Add some commands to fast-exec commands lists `NAMES-AND-COMMANDS` is pair from name & command."
+    `(--map
+     (fast-exec/add-command (-first-item it) (-second-item it))
+     (quote ,names-and-commands)))
 
 
 (defun fast-exec/*full-command-nth-char-and-word* (command n)
@@ -172,7 +179,6 @@ character will ignored as unnecassary."
 
 (defun fast-exec/*to-string-full-commands-as-candidates-with-nth-chars* (full-commands n)
     "To str `FULL-COMMANDS` as candidates for typing `N`-th char of commands' names.."
-
     (s-join "\n"
             (fast-exec/*to-string-groups-by-nth-char-full-commands*
              (--group-by (fast-exec/*full-command-nth-char* it n) full-commands)
@@ -236,7 +242,6 @@ For executing in `fast-exec/exec` command."
     (setq char-of-command-word
           (fast-exec/*completing-read-full-command-nth-part*
            "Enter Character, Please (: " full-commands typed-chars-num))
-
     (let ((suitable-full-commands
            (fast-exec/*full-commands-with-excepted-nth-char*
             full-commands
@@ -254,16 +259,9 @@ For executing in `fast-exec/exec` command."
 (defun fast-exec/initialize ()
     "Initialize for `fast-exec`."
     (interactive)
-    
-    (setq fast-exec/commands-and-names nil)
-    (setq fast-exec/full-commands nil)
-    
-    (fast-exec/add-command "Save All Files" 'save-some-buffers)
-    (fast-exec/add-command "Revert Buffer" 'revert-buffer)
-    (fast-exec/add-command "Set Mark" 'set-mark-command)
-
     (global-set-key (kbd fast-exec/keymap-prefix) 'fast-exec/exec)
     )
+
 
 (provide 'fast-exec)
 ;;; fast-exec.el ends here
