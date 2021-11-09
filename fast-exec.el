@@ -4,7 +4,8 @@
 
 ;; Author: semenInRussia <hrams205@gmail.com>
 ;; Version: 0.0.1
-;; Packages-Requires: ((dash "2.18.0"))
+;; Packages-Requires: ((dash "2.18.0")
+;;                     (s     "1.12.0"))
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -68,94 +69,19 @@ FULL COMMAND is command function and list of char for type and words for view."
   :type 'string)
 
 
-(defun fast-exec/*first-letter* (s)
-    "Return first letter of `S`."
-    (s-left 1 s)
-    )
-
-
-(defun fast-exec/*first-letter-upper-p* (s)
-    "Is first letter of `S` in upper case?"
-    (s-capitalized? (fast-exec/*first-letter* (s-trim s)))
-    )
-
-
-(defun fast-exec/*concat-strings* (strings)
-    "Concatenate `STRINGS`."
-    (--reduce (s-concat acc it) strings))
-
-
-(defun fast-exec/*join-strings* (sep strings)
-    "Join `STRINGS`, by `SEP`."
-    (fast-exec/*concat-strings* (-interpose sep strings))
-    )
-
-
 (defun fast-exec/add-command (command-name command)
-"Add command `COMMAND` with name `COMMAND-NAME` to `fast-exec` commands lists.
+    "Add command `COMMAND` with name `COMMAND-NAME` to `fast-exec` commands lists.
 WARNING! be caruful with case of `COMMAND-NAME` words of name in first lower
 character will ignored as unnecassary."
     (add-to-list 'fast-exec/commands-and-names '(command command-name))
-    (add-to-list 'fast-exec/full-commands
-                 (let* ((command-words
-                         (s-split-words command-name))
-                        (command-important-parts
-                         (--map
-                          (fast-exec/*join-strings* " " it)
-                          (-partition-before-pred 'fast-exec/*first-letter-upper-p* command-words)))
-                        (chars-of-command-important-parts
-                         (--map (string-to-char (s-downcase it)) command-important-parts)))
-                     (list
-                      command
-                      (-zip chars-of-command-important-parts command-important-parts)))))
+    (add-to-list 'fast-exec/full-commands (fast-exec/full-command command-name command)))
 
 
 (defmacro fast-exec/add-some-commands (&rest names-and-commands)
     "Add some commands to fast-exec commands lists `NAMES-AND-COMMANDS` is pair from name & command."
     `(--map
-     (fast-exec/add-command (-first-item it) (-second-item it))
-     (quote ,names-and-commands)))
-
-
-(defun fast-exec/*full-command-nth-char-and-word* (command n)
-    "Return `N`-th char and word of `COMMAND`'s name."
-    (nth n (-second-item command)))
-
-
-(defun fast-exec/*full-command-nth-word* (command n)
-    "Return `N`-th word of `COMMAND`'s name."
-    (cdr (fast-exec/*full-command-nth-char-and-word* command n))
-    )
-
-
-(defun fast-exec/*full-command-nth-char* (command n)
-    "Return first character of `N`-th word of `COMMAND`'s name."
-    (-first-item (fast-exec/*full-command-nth-char-and-word* command n))
-    )
-
-
-(defun fast-exec/*full-commands-with-excepted-nth-char* (commands expected-char n)
-    "Return full commands from `COMMANDS` what has `N`-th char `EXPECTED-CHAR`."
-    (--filter
-     (= (fast-exec/*full-command-nth-char* it typed-chars-num) char-of-command-word)
-     full-commands)
-    )
-
-
-(defun fast-exec/*nth-chars-of-full-commands* (commands n)
-    "Return first characters of `N`-th words of `COMMANDS`' names."
-    (--map
-     (fast-exec/*full-command-nth-char* it n)
-     commands)
-    )
-
-
-(defun fast-exec/*nth-words-of-full-commands* (commands n)
-    "Return first characters of `N`-th words of `COMMANDS`' names."
-    (--map
-     (fast-exec/*full-command-nth-word* it n)
-     commands)
-    )
+      (fast-exec/add-command (-first-item it) (-second-item it))
+      (quote ,names-and-commands)))
 
 
 (defun fast-exec/*to-string-nth-char-and-full-commands* (char-and-full-commands n)
@@ -164,7 +90,8 @@ character will ignored as unnecassary."
     (let* ((char-as-str (char-to-string (-first-item char-and-full-commands)))
            (full-commands (cdr char-and-full-commands))
            (nth-words-of-commands (fast-exec/*nth-words-of-full-commands* full-commands n))
-           (joined-nth-words (fast-exec/*join-strings* " | " nth-words-of-commands)))
+           (unique-nth-words (delete-dups nth-words-of-commands))
+           (joined-nth-words (fast-exec/*join-strings* " | " unique-nth-words)))
         (s-lex-format "${char-as-str}                                 ${joined-nth-words}"))
     )
 
@@ -181,7 +108,7 @@ character will ignored as unnecassary."
     "To str `FULL-COMMANDS` as candidates for typing `N`-th char of commands' names.."
     (s-join "\n"
             (fast-exec/*to-string-groups-by-nth-char-full-commands*
-             (--group-by (fast-exec/*full-command-nth-char* it n) full-commands)
+             (--group-by (fast-exec/full-command-nth-char it n) full-commands)
              n))
     )
 
@@ -209,28 +136,11 @@ For executing in `fast-exec/exec` command."
     "Read `full-command`'s `N`-th chars from user's minibufer from `CANDIDATES` with `PROMPT`."
     (setq fast-exec/*char-of-user* nil)
     (fast-exec/*view-full-commands-as-candidates-with-nth-chars-in-new-buffer* candidates n)
-    (let ((candidates-chars (fast-exec/*nth-chars-of-full-commands* candidates n)))
+    (let ((candidates-chars (fast-exec/nth-chars-of-full-commands candidates n)))
         (while (not (-contains? candidates-chars fast-exec/*char-of-user*))
             (setq fast-exec/*char-of-user* (read-char))
             (kill-buffer fast-exec/buffer-name)))
     fast-exec/*char-of-user*)
-
-
-(defun fast-exec/*full-command-only-command* (full-command)
-    "Return `command-function` of `FULL-COMMAND`."
-    (-first-item full-command))
-
-
-(defun fast-exec/*full-command-call* (full-command)
-    "Exceute only command of `FULL-COMMAND`."
-    (call-interactively (fast-exec/*full-command-only-command* full-command))
-    )
-
-
-(defun fast-exec/*call-first-full-command* (full-commands)
-    "Execute only command of first item of `FULL-COMMANDS`."
-    (fast-exec/*full-command-call* (-first-item full-commands))
-    )
 
 
 (defun fast-exec/exec (&optional full-commands typed-chars-num char-of-command-word)
@@ -251,7 +161,7 @@ For executing in `fast-exec/exec` command."
             ;; TODO: Add timeout
             (0 (message "Your command not found, we are back you to previous char!")) ;; TODO: Go back...
             (1 (message "Your command found! :) ... Executing")
-               (fast-exec/*call-first-full-command* suitable-full-commands))
+               (fast-exec/call-first-full-command suitable-full-commands))
             (_ (fast-exec/exec suitable-full-commands (+ typed-chars-num 1)))
             )))
 

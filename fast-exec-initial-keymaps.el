@@ -40,7 +40,7 @@
 
 (defun *delete-current-file* (delete-p)
     "If `DELETE-P`, Delete current file from FS and close its."
-    (interactive (let ((bname (buffer-file-name)))
+    (interactive (let ((bname (or (buffer-file-name) "unitled")))
                      (list
                       (y-or-n-p (s-lex-format "Delete file ${bname} ? " )))))
 
@@ -90,10 +90,11 @@ AUTHOR: XahLee http://xahlee.info"
         (delete-region p1 p2)))
 
 
-(defun fast-exec-define-keys ()
+(defun fast-exec/define-standard-keys ()
     "Define some useful \"keymaps\" for `fast-exec.el`."
     (interactive)
     "Define some useful \"keys\" for `fast-exec`."
+    
     (setq fast-exec/full-commands nil)
     (setq fast-exec/commands-and-names nil)
 
@@ -105,6 +106,7 @@ AUTHOR: XahLee http://xahlee.info"
      ("Delete Current File" *delete-current-file*)
      ("Rename Current File" *rename-current-file*)
      ("Indent Current File" *indent-current-file*)
+     ("Indent Selected Region" indent-region)
      ("Find and Replace String" replace-string)
      ("Replace Regexp" replace-regexp)
      ("Enable Whitespace Mode" *enable-whitespace-mode*)
