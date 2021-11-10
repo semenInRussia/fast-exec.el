@@ -34,6 +34,7 @@
 (require 'dash)
 (require 's)
 
+(require 'fast-exec-full-commands)
 
 
 (defgroup fast-exec nil
@@ -49,11 +50,10 @@
   :type 'string)
 
 
-(defcustom fast-exec/commands-and-names nil
-  "List of pair from command and name of this command."
+(defcustom fast-exec/keymap-function-chain nil
+  "This is list of function, which take nothing, and return some `full-commands`."
   :group 'fast-exec
-  :type '(repeat (command . string))
-  )
+  :type '(repeat function))
 
 
 (defcustom fast-exec/full-commands nil
@@ -69,29 +69,14 @@ FULL COMMAND is command function and list of char for type and words for view."
   :type 'string)
 
 
-(defun fast-exec/add-command (command-name command)
-    "Add command `COMMAND` with name `COMMAND-NAME` to `fast-exec` commands lists.
-WARNING! be caruful with case of `COMMAND-NAME` words of name in first lower
-character will ignored as unnecassary."
-    (add-to-list 'fast-exec/commands-and-names '(command command-name))
-    (add-to-list 'fast-exec/full-commands (fast-exec/full-command command-name command)))
-
-
-(defmacro fast-exec/add-some-commands (&rest names-and-commands)
-    "Add some commands to fast-exec commands lists `NAMES-AND-COMMANDS` is pair from name & command."
-    `(--map
-      (fast-exec/add-command (-first-item it) (-second-item it))
-      (quote ,names-and-commands)))
-
-
 (defun fast-exec/*to-string-nth-char-and-full-commands* (char-and-full-commands n)
     "To string grouped by character of `N`-th word of name `full-commands`."
 
     (let* ((char-as-str (char-to-string (-first-item char-and-full-commands)))
            (full-commands (cdr char-and-full-commands))
-           (nth-words-of-commands (fast-exec/*nth-words-of-full-commands* full-commands n))
+           (nth-words-of-commands (fast-exec/nth-words-of-full-commands full-commands n))
            (unique-nth-words (delete-dups nth-words-of-commands))
-           (joined-nth-words (fast-exec/*join-strings* " | " unique-nth-words)))
+           (joined-nth-words (fast-exec-str/join-strings " | " unique-nth-words)))
         (s-lex-format "${char-as-str}                                 ${joined-nth-words}"))
     )
 
@@ -153,7 +138,7 @@ For executing in `fast-exec/exec` command."
           (fast-exec/*completing-read-full-command-nth-part*
            "Enter Character, Please (: " full-commands typed-chars-num))
     (let ((suitable-full-commands
-           (fast-exec/*full-commands-with-excepted-nth-char*
+           (fast-exec/full-commands-with-excepted-nth-char
             full-commands
             char-of-command-word
             typed-chars-num)))
@@ -166,9 +151,54 @@ For executing in `fast-exec/exec` command."
             )))
 
 
+(defun fast-exec/register-keymap-func (func)
+    "Add `FUNC` to `fast-exec`' func chain for defining keymaps to `fast-exec`.
+`FUNC` is function, which taked nothing, and gives collection of
+`full-commands`.  I am not use for this situation basic list, because
+if user change mine list of keymaps, for valid updating
+\"fast-exec/full-commands\", user must delete your old keymaps' version,
+but if user use funcs and `fast-exec` use chain of functions, then after
+updating any function `fast-exec/full-commands` set to nil, and all functions
+ call again."
+    (unless (-contains? fast-exec/keymap-function-chain func)
+        (add-to-list 'fast-exec/keymap-function-chain func))
+    )
+
+
+(defun fast-exec/unregister-keymap-func (func)
+    "Remove `FUNC` from `fast-exec`' func chain for undefine keymaps to `fast-exec`.
+`FUNC` is function, which taked nothing, and gives collection of
+`full-commands`.  I am not use for this situation basic list, because
+if user change mine list of keymaps, for valid updating
+\"fast-exec/full-commands\", user must delete your old keymaps' version,
+but if user use funcs and `fast-exec` use chain of functions, then after
+updating any function `fast-exec/full-commands` set to nil, and all functions
+ call again."
+    (when (-contains? fast-exec/keymap-function-chain func)
+        (setq fast-exec/keymap-function-chain
+              (remove 'fast-exec/keymap-function-chain func)))
+    )
+
+
+(defun fast-exec/reload-functions-chain ()
+    "Recall all functions from `fast-exec/keymap-function-chain`."
+    (setq fast-exec/full-commands
+          (-flatten-n 1 (-map 'funcall fast-exec/keymap-function-chain)))
+    )
+
+(defun fast-exec/clean-function-chain (&optional functions-add-after)
+    "Clean `keymap-function-chain`, and add `FUNCTIONS-ADD-AFTER` after cleaning."
+    (interactive (list nil)) ; Ignore `functions-add-after` in interactive call
+    (setq fast-exec/keymap-function-chain functions-add-after)
+    )
+
+
 (defun fast-exec/initialize ()
     "Initialize for `fast-exec`."
     (interactive)
+    (require 'fast-exec-initial-keymaps)
+    (fast-exec/register-keymap-func 'fast-exec/define-standard-keys)
+    (fast-exec/reload-functions-chain)
     (global-set-key (kbd fast-exec/keymap-prefix) 'fast-exec/exec)
     )
 

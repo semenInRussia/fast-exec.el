@@ -50,6 +50,13 @@
     )
 
 
+(defun *kill-current-buffer* ()
+    "Kill current open buffer."
+    (interactive)
+    (kill-buffer (current-buffer))
+    )
+
+
 (defun *enable-whitespace-mode* ()
     "Enable `whitespace` mode."
     (interactive)
@@ -93,12 +100,8 @@ AUTHOR: XahLee http://xahlee.info"
 (defun fast-exec/define-standard-keys ()
     "Define some useful \"keymaps\" for `fast-exec.el`."
     (interactive)
-    "Define some useful \"keys\" for `fast-exec`."
     
-    (setq fast-exec/full-commands nil)
-    (setq fast-exec/commands-and-names nil)
-
-    (fast-exec/add-some-commands
+    (fast-exec/some-commands
      ("Revert Buffer" revert-buffer)
      ("Enable Auto Revert Mode" auto-revert-mode)
      ("Save All Files" save-some-buffers)
@@ -115,7 +118,8 @@ AUTHOR: XahLee http://xahlee.info"
      ("Delete Blank Lines" *delete-blank-lines*)
      ("Delete Duplicated Lines" delete-duplicate-lines)
      ("Delete Lines Contains" delete-matching-lines)
-     ("Delete Lines Not Contains" delete-non-matching-lines)))
+     ("Delete Lines Not Contains" delete-non-matching-lines)
+     ("Kill Current Buffer" *kill-current-buffer*)))
 
 
 (provide 'fast-exec-initial-keymaps)

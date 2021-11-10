@@ -25,30 +25,7 @@
 
 ;;; Code:
 (require 'dash)
-
-
-
-(defun fast-exec/*first-letter* (s)
-    "Return first letter of `S`."
-    (s-left 1 s)
-    )
-
-
-(defun fast-exec/*first-letter-upper-p* (s)
-    "Is first letter of `S` in upper case?"
-    (s-capitalized? (fast-exec/*first-letter* (s-trim s)))
-    )
-
-
-(defun fast-exec/*concat-strings* (strings)
-    "Concatenate `STRINGS`."
-    (--reduce (s-concat acc it) strings))
-
-
-(defun fast-exec/*join-strings* (sep strings)
-    "Join `STRINGS`, by `SEP`."
-    (fast-exec/*concat-strings* (-interpose sep strings))
-    )
+(require 'fast-exec-str)
 
 
 (defun fast-exec/full-command (command-name command)
@@ -59,8 +36,8 @@ character will ignored as unnecassary."
             (s-split-words command-name))
            (command-important-parts
             (--map
-             (fast-exec/*join-strings* " " it)
-             (-partition-before-pred 'fast-exec/*first-letter-upper-p* command-words)))
+             (fast-exec-str/join-strings " " it)
+             (-partition-before-pred 'fast-exec-str/first-letter-upper-p command-words)))
            (chars-of-command-important-parts
             (--map (string-to-char (s-downcase it)) command-important-parts)))
         (list
