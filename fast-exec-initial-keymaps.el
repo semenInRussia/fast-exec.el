@@ -119,7 +119,12 @@ AUTHOR: XahLee http://xahlee.info"
      ("Delete Duplicated Lines" delete-duplicate-lines)
      ("Delete Lines Contains" delete-matching-lines)
      ("Delete Lines Not Contains" delete-non-matching-lines)
-     ("Kill Current Buffer" *kill-current-buffer*)))
+     ("Kill Current Buffer" *kill-current-buffer*)
+     ("Transpose Words" transpose-words)
+     ("Transpose Regions" transpose-regions)
+     ("Transpose Lines" transpose-lines)
+     ("Transpose Sexps" transpose-sexps))
+    )
 
 
 (provide 'fast-exec-initial-keymaps)
