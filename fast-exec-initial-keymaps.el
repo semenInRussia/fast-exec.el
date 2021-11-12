@@ -30,7 +30,6 @@
 (require 'fast-exec)
 
 
-
 (defun *delete-whole-file-content* ()
     "Delete whole content of current open file/buffer."
     (interactive)
@@ -108,6 +107,7 @@ AUTHOR: XahLee http://xahlee.info"
      ("Delete the Whole File's Content" *delete-whole-file-content*)
      ("Delete Current File" *delete-current-file*)
      ("Rename Current File" *rename-current-file*)
+     ("Move Current File" *rename-current-file*)
      ("Indent Current File" *indent-current-file*)
      ("Indent Selected Region" indent-region)
      ("Find and Replace String" replace-string)
@@ -123,7 +123,9 @@ AUTHOR: XahLee http://xahlee.info"
      ("Transpose Words" transpose-words)
      ("Transpose Regions" transpose-regions)
      ("Transpose Lines" transpose-lines)
-     ("Transpose Sexps" transpose-sexps))
+     ("Transpose Sexps" transpose-sexps)
+     ("Align by Regular Expresion" align-regexp)
+     ("Open Eshell" eshell))
     )
 
 

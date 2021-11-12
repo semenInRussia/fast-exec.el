@@ -112,7 +112,7 @@ For executing in `fast-exec/exec` command."
           (inhibit-read-only t))
         (progn
             (switch-to-buffer new-buffer)
-            (funcall 'org-mode)
+            (funcall 'fundamental-mode)
             (fast-exec/*insert-full-commands-as-candidates-with-nth-chars* full-commands n)))
     )
 
@@ -121,6 +121,7 @@ For executing in `fast-exec/exec` command."
     "Read `full-command`'s `N`-th chars from user's minibufer from `CANDIDATES` with `PROMPT`."
     (setq fast-exec/*char-of-user* nil)
     (fast-exec/*view-full-commands-as-candidates-with-nth-chars-in-new-buffer* candidates n)
+    
     (let ((candidates-chars (fast-exec/nth-chars-of-full-commands candidates n)))
         (while (not (-contains? candidates-chars fast-exec/*char-of-user*))
             (setq fast-exec/*char-of-user* (read-char))
@@ -201,6 +202,7 @@ updating any function `fast-exec/full-commands` set to nil, and all functions
     (fast-exec/reload-functions-chain)
     (global-set-key (kbd fast-exec/keymap-prefix) 'fast-exec/exec)
     )
+
 
 
 (provide 'fast-exec)
