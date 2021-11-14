@@ -110,7 +110,7 @@ AUTHOR: XahLee http://xahlee.info"
      ("Move Current File" *rename-current-file*)
      ("Indent Current File" *indent-current-file*)
      ("Indent Selected Region" indent-region)
-     ("Find and Replace String" replace-string)
+     ("Search and Replace String" replace-string)
      ("Replace Regexp" replace-regexp)
      ("Enable Whitespace Mode" *enable-whitespace-mode*)
      ("Disable Whitespace Mode" *disable-whitespace-mode*)
