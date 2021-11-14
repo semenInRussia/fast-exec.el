@@ -201,7 +201,7 @@ updating any function `fast-exec/full-commands` set to nil, and all functions
 
 (defun fast-exec/reload-functions-chain ()
     "Recall all functions from `fast-exec/keymap-function-chain`."
-
+    (interactive)
     (setq fast-exec/full-commands
           (-flatten-n 1 (-map 'funcall fast-exec/keymap-function-chain)))
     )
