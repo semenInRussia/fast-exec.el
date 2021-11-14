@@ -201,6 +201,7 @@ updating any function `fast-exec/full-commands` set to nil, and all functions
 
 (defun fast-exec/reload-functions-chain ()
     "Recall all functions from `fast-exec/keymap-function-chain`."
+
     (setq fast-exec/full-commands
           (-flatten-n 1 (-map 'funcall fast-exec/keymap-function-chain)))
     )
@@ -210,6 +211,8 @@ updating any function `fast-exec/full-commands` set to nil, and all functions
     "Clean `keymap-function-chain`, and add `FUNCTIONS-ADD-AFTER` after cleaning."
     (interactive (list nil)) ; Ignore `functions-add-after` in interactive call
     (setq fast-exec/keymap-function-chain functions-add-after)
+    (setq fast-exec/full-commands nil)
+    (fast-exec/reload-functions-chain)
     )
 
 
@@ -222,6 +225,7 @@ updating any function `fast-exec/full-commands` set to nil, and all functions
     (global-set-key (kbd fast-exec/keymap-prefix) 'fast-exec/exec)
     )
 
+(require 'fast-exec-yasnippet-keymaps)
 
 (provide 'fast-exec)
 ;;; fast-exec.el ends here
