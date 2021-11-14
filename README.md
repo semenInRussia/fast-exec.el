@@ -13,7 +13,6 @@ cd .emacs.d/lisp
 git clone https://github.com/semenInRussia/fast-exec.el.git
 ```
 
-
 For get start paste folowed code to your Emacs init file:
 
 ```emacs-lisp
@@ -28,6 +27,36 @@ For get start paste folowed code to your Emacs init file:
 By default, for run `fast-exec/exec` you must press to `M-a` keymap, but you can change this keymap.
 
 `fast-exec/exec` is main function of `fast-exec.el`, it's view hints buffer, which contain some pair of letter and command's name, letter you must press on letter for running command with corresponding name.
+
+
+## Support of Very Famous Packages
+
+By default, `fast-exec` contain only keymaps for vanila Emacs commands, but you can use very famous package, for example: projectile, magit. For some famous package `fast-exec` has built in support. Full list of supported packages:
+
+* [Projectile](https://github.com/bbatsov/projectile)
+* [Yasnippet](https://github.com/joaotavora/yasnippet)
+
+For enable this support, paste this code to your emacs' config.
+
+```emacs-lisp
+;            Change projectile to other word from list of supported packages
+;                                |
+;                                |
+;                                |
+(fast-exec/enable-builtin-support projectile)
+;;                               ^
+;; This is enable only 1 support |
+
+(fast-exec/enable-some-builtin-supports projectile
+                                        yasnippet)
+;                                       ^
+;                                       |
+;                                       |
+;                                       |
+;            Change projectile and yasnippet
+;            to other words from list of supported packages
+```
+
 
 ## Customization
 
