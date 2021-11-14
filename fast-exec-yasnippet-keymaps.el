@@ -3,7 +3,6 @@
 
 ;; Author: semenInRussia <hrams205@gmail.com>
 ;; Version: 0.0.1
-;; Packages-Requires: ((fast-exec "0.0.1"))
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -26,9 +25,6 @@
 ;; (fast-exec/register-keymap-func 'fast-exec-define-yasnippet-keys)
 ;; ```
 ;;; Code:
-
-(require 'fast-exec)
-
 
 (defun fast-exec/define-yasnippet-keys ()
     "Define some useful \"keymaps\" for `fast-exec.el`."
