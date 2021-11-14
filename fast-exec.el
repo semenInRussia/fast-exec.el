@@ -184,16 +184,33 @@ updating any function `fast-exec/full-commands` set to nil, and all functions
       (quote ,funcs)))
 
 
+(defun fast-exec/*enable-builtin-support-function* (pkg-name)
+"This is as `fast-exec/enable-builtin-support`, but without quoting `PKG-NAME`."
+(let ((built-in-func
+        (intern
+         (s-concat "fast-exec/define-" (symbol-name pkg-name) "-keys"))))
+     (fast-exec/register-keymap-func built-in-func)
+    ))
+
+
 (defmacro fast-exec/enable-builtin-support (pkg-name)
 "Enable package support with name `PKG-NAME` builtin in `fast-exec.el`.
 Examples of `PKG-NAME`:
 * yasnippet
 * projectile."
-`(let ((built-in-func
-        (intern
-         (s-concat "fast-exec/define-" (symbol-name ',pkg-name) "-keys"))))
-     (fast-exec/register-keymap-func built-in-func)
-    ))
+
+     `(fast-exec/*enable-builtin-support-function* ',pkg-name)
+    )
+
+
+(defmacro fast-exec/enable-some-builtin-supports (&rest pkg-names)
+"Enable some package supports with names `PKG-NAMES` builtin in `fast-exec.el`.
+Examples of `PKG-NAMES`:
+* yasnippet
+* projectile."
+`(--map (fast-exec/*enable-builtin-support-function* it) (quote ,pkg-names))
+)
+
 
 (defun fast-exec/unregister-keymap-func (func)
 "Remove `FUNC` from `fast-exec`' func chain for undefine keymaps to `fast-exec`.
