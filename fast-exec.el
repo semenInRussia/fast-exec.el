@@ -226,6 +226,7 @@ updating any function `fast-exec/full-commands` set to nil, and all functions
     )
 
 (require 'fast-exec-yasnippet-keymaps)
+(require 'fast-exec-projectile-keymaps)
 
 (provide 'fast-exec)
 ;;; fast-exec.el ends here
