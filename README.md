@@ -7,6 +7,7 @@
 
 ## Get Start
 Install this package, for example with current command, in this example user save all packages in `.emacs.d/lisp`:
+
 ```bash
 cd .emacs.d/lisp
 git clone https://github.com/semenInRussia/fast-exec.el.git
@@ -14,14 +15,13 @@ git clone https://github.com/semenInRussia/fast-exec.el.git
 
 
 For get start paste folowed code to your Emacs init file:
+
 ```emacs-lisp
 
 (require 'fast-exec)
 (fast-exec/initialize)
 
 ```
-
-
 
 ## Usage
 
@@ -43,7 +43,9 @@ By default you must press `M-a` keymap for run `fast-exec/exec`, but you can cha
 
 ### Define Keymaps
 
-For defining keymaps you must use functions `fast-exec/register-keymap-function`, this function take 1 argument: function, this function must return list of `full-command`-s. Example:
+For defining keymaps you must use functions `fast-exec/register-keymap-func` and `fast-exec/register-some-keymap-funcs`.
+
+Function `fast-exec/register-keymap-func` take 1 argument: function, this function must return list of `full-command`-s. Example:
 
 ```emacs-lisp
 
@@ -52,6 +54,15 @@ For defining keymaps you must use functions `fast-exec/register-keymap-function`
 ; About function `fast-exec/full-command` read text below!
 
 ```
+
+Function `fast-exec/register-some-keymap-funcs` take infinity arguments, and do `fast-exec/register-keymap-func`, but add quote, Example:
+
+```emacs-lisp
+(fast-exec/register-some-keymap-funcs
+    foo
+    bar)
+```
+
 
 Note: I am not use for this situation basic list, because
 if user change mine list of keymaps, for valid updating

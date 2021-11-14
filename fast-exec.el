@@ -160,14 +160,32 @@ if user change mine list of keymaps, for valid updating
 \"fast-exec/full-commands\", user must delete your old keymaps' version,
 but if user use funcs and `fast-exec` use chain of functions, then after
 updating any function `fast-exec/full-commands` set to nil, and all functions
- call again."
+ call again. Example:
+`(fast-exec/register-keymap-func 'foo)`."
     (unless (-contains? fast-exec/keymap-function-chain func)
         (add-to-list 'fast-exec/keymap-function-chain func))
     )
 
 
+(defmacro fast-exec/register-some-keymap-funcs (&rest funcs)
+"Add all `FUNCS` to `fast-exec`' func chain for defining keymaps to `fast-exec`.
+`FUNC` is function, which taked nothing, and gives collection of
+`full-commands`.  I am not use for this situation basic list, because
+if user change mine list of keymaps, for valid updating
+\"fast-exec/full-commands\", user must delete your old keymaps' version,
+but if user use funcs and `fast-exec` use chain of functions, then after
+updating any function `fast-exec/full-commands` set to nil, and all functions
+ call again. Example:
+`(fast-exec/register-some-keymaps-funcs
+    foo
+    bar).`"
+    `(--map
+      (fast-exec/register-keymap-func it)
+      (quote ,funcs)))
+
+
 (defun fast-exec/unregister-keymap-func (func)
-    "Remove `FUNC` from `fast-exec`' func chain for undefine keymaps to `fast-exec`.
+"Remove `FUNC` from `fast-exec`' func chain for undefine keymaps to `fast-exec`.
 `FUNC` is function, which taked nothing, and gives collection of
 `full-commands`.  I am not use for this situation basic list, because
 if user change mine list of keymaps, for valid updating
@@ -187,6 +205,7 @@ updating any function `fast-exec/full-commands` set to nil, and all functions
           (-flatten-n 1 (-map 'funcall fast-exec/keymap-function-chain)))
     )
 
+
 (defun fast-exec/clean-function-chain (&optional functions-add-after)
     "Clean `keymap-function-chain`, and add `FUNCTIONS-ADD-AFTER` after cleaning."
     (interactive (list nil)) ; Ignore `functions-add-after` in interactive call
@@ -202,7 +221,6 @@ updating any function `fast-exec/full-commands` set to nil, and all functions
     (fast-exec/reload-functions-chain)
     (global-set-key (kbd fast-exec/keymap-prefix) 'fast-exec/exec)
     )
-
 
 
 (provide 'fast-exec)
