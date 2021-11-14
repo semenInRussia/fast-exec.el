@@ -35,6 +35,7 @@ By default, `fast-exec` contain only keymaps for vanila Emacs commands, but you 
 
 * [Projectile](https://github.com/bbatsov/projectile)
 * [Yasnippet](https://github.com/joaotavora/yasnippet)
+* [Magit](https://github.com/magit/magit)
 
 For enable this support, paste this code to your emacs' config.
 
