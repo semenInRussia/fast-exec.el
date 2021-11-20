@@ -1,4 +1,4 @@
-;;; fast-exec-yasnippet-keymaps --- Additional to fast-exec, define "keymaps" for projectile
+;;; fast-exec-projectile-keymaps --- Support of projectile for "fast-exec"
 ;; Copyright (C) 2021 Free Software Foundation, Inc.
 
 ;; Author: semenInRussia <hrams205@gmail.com>
@@ -38,14 +38,19 @@
      ("Projectile Open Version Controle" projectile-vc)
      ("Projectile Open Dired" projectile-dired)
      ("Projectile Search and Replace String" projectile-replace)
-     ("Projectile Search and Replace Regular Expression" projectile-replace-regexp)
-     ("Projectile Complie Project" project-compile-project)
-     ("Projectile Discover Projects in Search Path" projectile-discover-projects-in-search-path)
-     ("Projectile Discover Projects in Current Directory" projectile-discover-projects-in-directory)
+     ("Projectile Search and Replace Regular Expression"
+      projectile-replace-regexp)
+     ("Projectile Complie Project"
+      project-compile-project)
+     ("Projectile Discover Projects in Search Path"
+      projectile-discover-projects-in-search-path)
+     ("Projectile Discover Projects in Current Directory"
+      projectile-discover-projects-in-directory)
      ("Projectile Edit Dir Locale" projectile-edit-dir-locals)
-     ("Projectile To Implementation or Test" projectile-toggle-between-implementation-and-test)
+     ("Projectile To Implementation or Test"
+      projectile-toggle-between-implementation-and-test)
      ("Projectile Run Install Commnad" projectile-install-project)
-     ("Projectile Close Project" projectile-kill-buffers)
+     ("Projectile Close All Files of Project" projectile-kill-buffers)
      ("Projectile Run Command in Root" projectile-run-command-in-root)
      ("Projectile Run Project" projectile-run-project)
      )
