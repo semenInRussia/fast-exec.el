@@ -81,20 +81,18 @@ FULL COMMAND is command function and list of char for type and words for view."
             (fast-exec/nth-words-of-full-commands full-commands n))
            (unique-nth-words (delete-dups nth-words-of-commands))
            (previous-n (max (- n 1) 0))
-           (previous-words
-            (if (= n 0)
-                nil
-                (fast-exec/nth-words-of-full-commands
-                 full-commands
-                 previous-n)))
-           (unique-previous-words (delete-dups previous-words))
+           previous-word
            (joined-nth-words
-            (fast-exec-str/join-strings " | " unique-nth-words))
-           (joined-previous-words
-            (fast-exec-str/join-strings " | " unique-previous-words)))
+            (fast-exec-str/join-strings " | " unique-nth-words)))
+
+        (if (= n 0)
+            (setq previous-word "")
+            (setq previous-word
+                  (fast-exec/first-full-command-nth-word full-commands n))
+            )
 
         (s-lex-format
-         "${joined-previous-words} | ${char-as-str} | ${joined-nth-words}")
+         "${previous-word} | ${char-as-str} | ${joined-nth-words}")
     ))
 
 

@@ -65,6 +65,13 @@ character will ignored as unnecassary."
     )
 
 
+(defun fast-exec/first-full-command-nth-word (commands n)
+    "Return `N`-th word of name of first command from `COMMANDS`."
+    (interactive)
+    (fast-exec/full-command-nth-word (-first-item commands) n)
+    )
+
+
 (defun fast-exec/full-command-nth-char (command n)
     "Return first character of `N`-th word of `COMMAND`'s name."
     (-first-item (fast-exec/full-command-nth-char-and-word command n))
