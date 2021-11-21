@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<title>README.html</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+
+</head>
+
+<body>
+
+<h1 id="fast-exec-fast-exec.el">Fast Exec (fast-exec.el)</h1>
+<p><code>fast-exec.el</code> is awesome package for Emacs, it’s mark executing command (“M-x”) as very fast task.</p>
+<h2 id="cool-demo">Cool Demo</h2>
+<figure>
+<img src="doc/assets/gif/fast-exec-demo.gif" alt="fast-exec demo" /><figcaption aria-hidden="true">fast-exec demo</figcaption>
+</figure>
+<h2 id="get-start">Get Start</h2>
+<p>Install this package, for example with current command, in this example user save all packages in <code>.emacs.d/lisp</code>:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> .emacs.d/lisp</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/semenInRussia/fast-exec.el.git</span></code></pre></div>
+<p>For get start paste folowed code to your Emacs init file:</p>
+<pre class="emacs-lisp"><code>
+(require &#39;fast-exec)
+(fast-exec/initialize)
+</code></pre>
+<h2 id="usage">Usage</h2>
+<p>By default, for run <code>fast-exec/exec</code> you must press to <code>M-a</code> keymap, but you can change this keymap.</p>
+<p><code>fast-exec/exec</code> is main function of <code>fast-exec.el</code>, it’s view hints buffer, which contain some pair of letter and command’s name, letter you must press on letter for running command with corresponding name.</p>
+<h2 id="customization">Customization</h2>
+<h3 id="customizate-keymap-for-call-fast-exexexec">Customizate Keymap for call fast-exex/exec</h3>
+<p>By default you must press <code>M-a</code> keymap for run <code>fast-exec/exec</code>, but you can change this keymap, for its set <code>fast-exec/keymap-prefix</code>. For example, folowed code:</p>
+<pre class="emacs-lisp"><code>
+(setq fast-exec/keymap-prefix &quot;M-l&quot;)
+</code></pre>
+<h3 id="define-keymaps">Define Keymaps</h3>
+<p>For defining keymaps you must use functions <code>fast-exec/register-keymap-function</code>, this function take 1 argument: function, this function must return list of <code>full-command</code>-s. Example:</p>
+<pre class="emacs-lisp"><code>
+(fast-exec/register-keymap-func (lambda ()
+                                    (list (fast-exec/full-command &quot;Call Foo&quot; &#39;foo))))
+; About function `fast-exec/full-command` read text below!
+</code></pre>
+<p>Note: I am not use for this situation basic list, because if user change mine list of keymaps, for valid updating “fast-exec/full-commands”, user must delete your old keymaps’ version, but if user and <code>fast-exec</code> use chain of functions, then after updating any function <code>fast-exec/full-commands</code> set to nil, and all functions call again.</p>
+<p>Full command is special type of <code>fast-exec.el</code>, which content understand don’t required.</p>
+<p>For creating <code>full-command</code> you can use 2 folowed functions: <code>fast-exec/full-command</code> and <code>fast-exec/some-commands</code>. As you can predict, <code>fast-exec/full-command</code> create 1 command and <code>fast-exec/some-commands</code> create some commands.</p>
+<p><code>fast-exec/full-command</code> take 2 arguments: name of command and command. <code>name</code> of command also it’s letters which you canpress after call <code>fast-exec/exec</code> for call <code>command</code>. Be careful with case of words of <code>name</code>, words with first lower letter will ignore. <code>command</code> is interactive symbolic funtion’s name. Example:</p>
+<pre class="emacs-lisp"><code>
+(fast-exec/full-command &quot;Call My the Function&quot; &#39;my-function)
+;                       ^                       ^
+;                       |                       |
+;For call `my-function` press cmf               |
+;Word &quot;the&quot; is ignored, because                 |
+;first letter in lower case                     |
+                                        ;`my-function` is interactive func
+                                        ;Here used quote</code></pre>
+<p><code>fast-exec/some-commands</code> take infinity arguments. This arguments is pairs of command and name, but also different from <code>fast-exec/full-command</code> is that function don’t need to quote. Example:</p>
+<pre class="emacs-lisp"><code>
+(fast-exec/some-commands
+ (&quot;Call Function Foo&quot; foo)
+ (&quot;Call Function Bar&quot; bar))
+;                     ^
+;                     |
+;                Not quote!
+</code></pre>
+
+</body>
+</html>
