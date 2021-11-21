@@ -124,6 +124,7 @@ AUTHOR: XahLee http://xahlee.info"
      ("Transpose Regions" transpose-regions)
      ("Transpose Lines" transpose-lines)
      ("Transpose Sexps" transpose-sexps)
+     ("Check Parens" check-parens)
      ("Align by Regular Expresion" align-regexp)
      ("Open Eshell" eshell))
     )
