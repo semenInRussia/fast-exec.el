@@ -94,7 +94,7 @@ FULL COMMAND is command function and list of char for type and words for view."
             (fast-exec-str/join-strings " | " unique-previous-words)))
 
         (s-lex-format
-         "${joined-previous-words} | ${char-as-str} |      ${joined-nth-words}")
+         "${joined-previous-words} | ${char-as-str} | ${joined-nth-words}")
     ))
 
 
@@ -123,13 +123,13 @@ FULL COMMAND is command function and list of char for type and words for view."
     )
 
 
-(defun align-repeat (start end regexp)
- "Repeat alignment with respect to the given regular expression `REGEXP`.
+(defun fast-exec/*dev-align-regexp* (start end regexp)
+ "Alignment with respect to the given regular expression `REGEXP`.
 Call to region begin from `START` and end to `END`.
-Code from: https://www.emacswiki.org/emacs/AlignCommands#h5o-2"
+Part of Code got from: https://www.emacswiki.org/emacs/AlignCommands#h5o-2"
     (interactive "r\nsAlign regexp: ")
     (align-regexp start end
-                  (concat "\\(\\s-*\\)" regexp) 1 1 t))
+                  (concat "\\(\\s-*\\)" regexp) 1 1 nil))
 
 
 (defun fast-exec/*view-full-commands-as-hints-with-nth-chars-in-new-buffer*
@@ -142,8 +142,8 @@ For executing in `fast-exec/exec` command."
         (fast-exec/*insert-full-commands-as-hints-with-nth-chars*
          full-commands
          n)
-        (align-repeat (point-min) (point-max) "      ")
-        (align-repeat (point-min) (point-max) "| . |")
+        (fast-exec/*dev-align-regexp* (point-min) (point-max) "| . |")
+        (fast-exec/*dev-align-regexp* (point-min) (point-max) " ")
         (highlight-regexp "| . |" 'outline-6))
     )
 
