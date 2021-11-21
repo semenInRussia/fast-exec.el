@@ -1,4 +1,4 @@
-;;; fast-exec-full-commands --- This subpackage of fast-exec.el for manipulations with full-commands
+;;; fast-exec-full-commands --- This package of fast-exec.el for full-commands manipulations
 
 ;; Copyright (C) 2021 Free Software Foundation, Inc.
 
@@ -21,7 +21,8 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-;; This package has functions for manipulations with full-commands: create, get info
+;; This package has functions for manipulations with full-commands: create,
+;; get info!
 
 ;;; Code:
 (require 'dash)
@@ -37,7 +38,8 @@ character will ignored as unnecassary."
            (command-important-parts
             (--map
              (fast-exec-str/join-strings " " it)
-             (-partition-before-pred 'fast-exec-str/first-letter-upper-p command-words)))
+             (-partition-before-pred
+              'fast-exec-str/first-letter-upper-p command-words)))
            (chars-of-command-important-parts
             (--map (string-to-char (s-downcase it)) command-important-parts)))
         (list
@@ -46,7 +48,7 @@ character will ignored as unnecassary."
 
 
 (defmacro fast-exec/some-commands (&rest names-and-commands)
-    "Return some commands with names with names % commands from `NAMES-AND-COMMANDS`."
+    "Get some commands with respective names from `NAMES-AND-COMMANDS`."
     `(--map
       (fast-exec/full-command (-first-item it) (-second-item it))
       (quote ,names-and-commands)))
@@ -73,7 +75,7 @@ character will ignored as unnecassary."
     "Return full commands from `COMMANDS` what has `N`-th char `EXPECTED-CHAR`."
     (--filter
      (= (fast-exec/full-command-nth-char it n) expected-char)
-     full-commands)
+     commands)
     )
 
 

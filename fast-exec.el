@@ -28,7 +28,7 @@
 ;;;    2. press `s`         | This is Save
 ;;;    3. press `a`         | This is All
 ;;;    4. press `f`         | This is files
-;;; 
+;;;
 ;;; Code:
 
 (require 'dash)
@@ -40,7 +40,8 @@
 (defgroup fast-exec nil
     "Very Fast Execute Commands!."
     :group 'tools
-    :link '(url-link :tag "GitHub" "https://github.com/semenInRussia/fast-M-x.el")
+    :link
+    '(url-link :tag "GitHub" "https://github.com/semenInRussia/fast-M-x.el")
     )
 
 
@@ -51,7 +52,7 @@
 
 
 (defcustom fast-exec/keymap-function-chain nil
-  "This is list of function, which take nothing, and return some `full-commands`."
+  "List of function, which take nothing, and return some `full-commands`."
   :group 'fast-exec
   :type '(repeat function))
 
@@ -69,38 +70,44 @@ FULL COMMAND is command function and list of char for type and words for view."
   :type 'string)
 
 
-(defun fast-exec/*to-string-nth-char-and-full-commands* (char-and-full-commands n)
+(defun fast-exec/*to-string-nth-char-and-full-commands*
+    (char-and-full-commands n)
     "To string grouped by character of `N`-th word of name `full-commands`."
 
     (let* ((char-as-str (char-to-string (-first-item char-and-full-commands)))
            (full-commands (cdr char-and-full-commands))
-           (nth-words-of-commands (fast-exec/nth-words-of-full-commands full-commands n))
+           (nth-words-of-commands
+            (fast-exec/nth-words-of-full-commands full-commands n))
            (unique-nth-words (delete-dups nth-words-of-commands))
-           (joined-nth-words (fast-exec-str/join-strings " | " unique-nth-words)))
-        (s-lex-format "${char-as-str}                                 ${joined-nth-words}"))
+           (joined-nth-words
+            (fast-exec-str/join-strings " | " unique-nth-words)))
+        (s-lex-format
+         "${char-as-str}                      ${joined-nth-words}"))
     )
 
 
 (defun fast-exec/*to-string-groups-by-nth-char-full-commands* (groups n)
-    "To string groups grouped by character of `N`-th word of name `full-commands`."
-    
+    "To str grouped by char of `N`-th word of name `full-commands` `GROUPS`."
     (--map (fast-exec/*to-string-nth-char-and-full-commands* it n)
            groups)
     )
 
 
-(defun fast-exec/*to-string-full-commands-as-candidates-with-nth-chars* (full-commands n)
-    "To str `FULL-COMMANDS` as candidates for typing `N`-th char of commands' names.."
+(defun fast-exec/*to-string-full-commands-as-candidates-with-nth-chars*
+    (full-commands n)
+    "To str `FULL-COMMANDS` as hints for typing `N`-th char of commands' names."
     (s-join "\n"
             (fast-exec/*to-string-groups-by-nth-char-full-commands*
              (--group-by (fast-exec/full-command-nth-char it n) full-commands)
-             n))
-    )
+             n)))
 
 
-(defun fast-exec/*insert-full-commands-as-candidates-with-nth-chars* (full-commands n)
-    "Insert `FULL-COMMANDS` as candidates for typing `N`-th char of commands' names.."
-    (insert (fast-exec/*to-string-full-commands-as-candidates-with-nth-chars* full-commands n))
+(defun fast-exec/*insert-full-commands-as-candidates-with-nth-chars*
+    (full-commands n)
+    "Insert `FULL-COMMANDS` as hints for typing `N`-th char in commands' names."
+    (insert
+     (fast-exec/*to-string-full-commands-as-candidates-with-nth-chars*
+      full-commands n))
     )
 
 
@@ -113,39 +120,46 @@ For executing in `fast-exec/exec` command."
         (progn
             (switch-to-buffer new-buffer)
             (funcall 'fundamental-mode)
-            (fast-exec/*insert-full-commands-as-candidates-with-nth-chars* full-commands n)))
+            (fast-exec/*insert-full-commands-as-candidates-with-nth-chars*
+             full-commands
+             n)))
     )
 
 
 (defun fast-exec/*completing-read-full-command-nth-part* (prompt candidates n)
-    "Read `full-command`'s `N`-th chars from user's minibufer from `CANDIDATES` with `PROMPT`."
-    (setq fast-exec/*char-of-user* nil)
-    (fast-exec/*view-full-commands-as-candidates-with-nth-chars-in-new-buffer* candidates n)
-    
-    (let ((candidates-chars (fast-exec/nth-chars-of-full-commands candidates n)))
-        (while (not (-contains? candidates-chars fast-exec/*char-of-user*))
-            (setq fast-exec/*char-of-user* (read-char))
-            (kill-buffer fast-exec/buffer-name)))
-    fast-exec/*char-of-user*)
+    "Ask full command's `N`-th chars of `CANDIDATES` from user  with `PROMPT`."
+    (fast-exec/*view-full-commands-as-candidates-with-nth-chars-in-new-buffer*
+     candidates
+     n)
+
+    (prog1
+     (read-char)
+     (kill-buffer fast-exec/buffer-name))
+    )
 
 
-(defun fast-exec/exec (&optional full-commands typed-chars-num char-of-command-word)
+(defun fast-exec/exec
+    (&optional full-commands typed-chars-num char-of-command-word)
     "Execute command, command searching from `CHAR-OF-COMMAND-WORD`."
     (interactive)
-    
-    (setq full-commands (or full-commands fast-exec/full-commands))
+
     (setq typed-chars-num (or typed-chars-num 0))
+    (setq full-commands (or full-commands fast-exec/full-commands))
+
     (setq char-of-command-word
           (fast-exec/*completing-read-full-command-nth-part*
            "Enter Character, Please (: " full-commands typed-chars-num))
+
     (let ((suitable-full-commands
            (fast-exec/full-commands-with-excepted-nth-char
             full-commands
             char-of-command-word
             typed-chars-num)))
+
         (pcase (length suitable-full-commands)
-            ;; TODO: Add timeout
-            (0 (message "Your command not found, we are back you to previous char!")) ;; TODO: Go back...
+            (0 (message
+                "Your command not found, we are back you to previous char!")
+               (fast-exec/exec full-commands typed-chars-num))
             (1 (message "Your command found! :) ... Executing")
                (fast-exec/call-first-full-command suitable-full-commands))
             (_ (fast-exec/exec suitable-full-commands (+ typed-chars-num 1)))
@@ -168,7 +182,7 @@ updating any function `fast-exec/full-commands` set to nil, and all functions
 
 
 (defmacro fast-exec/register-some-keymap-funcs (&rest funcs)
-"Add all `FUNCS` to `fast-exec`' func chain for defining keymaps to `fast-exec`.
+    "Add `FUNCS` to `fast-exec`' func chain for defining keymaps to `fast-exec`.
 `FUNC` is function, which taked nothing, and gives collection of
 `full-commands`.  I am not use for this situation basic list, because
 if user change mine list of keymaps, for valid updating
@@ -185,35 +199,35 @@ updating any function `fast-exec/full-commands` set to nil, and all functions
 
 
 (defun fast-exec/*enable-builtin-support-function* (pkg-name)
-"This is as `fast-exec/enable-builtin-support`, but without quoting `PKG-NAME`."
-(let ((built-in-func
-        (intern
-         (s-concat "fast-exec/define-" (symbol-name pkg-name) "-keys"))))
-     (fast-exec/register-keymap-func built-in-func)
-    ))
+    "As `fast-exec/enable-builtin-support`, but without quoting `PKG-NAME`."
+    (let ((built-in-func
+           (intern
+            (s-concat "fast-exec/define-" (symbol-name pkg-name) "-keys"))))
+        (fast-exec/register-keymap-func built-in-func)
+        ))
 
 
 (defmacro fast-exec/enable-builtin-support (pkg-name)
-"Enable package support with name `PKG-NAME` builtin in `fast-exec.el`.
+    "Enable package support with name `PKG-NAME` builtin in `fast-exec.el`.
 Examples of `PKG-NAME`:
 * yasnippet
 * projectile."
 
-     `(fast-exec/*enable-builtin-support-function* ',pkg-name)
+    `(fast-exec/*enable-builtin-support-function* ',pkg-name)
     )
 
 
 (defmacro fast-exec/enable-some-builtin-supports (&rest pkg-names)
-"Enable some package supports with names `PKG-NAMES` builtin in `fast-exec.el`.
+    "Enable some package's supports called `PKG-NAMES` builtin in fast-exec.el.
 Examples of `PKG-NAMES`:
 * yasnippet
 * projectile."
-`(--map (fast-exec/*enable-builtin-support-function* it) (quote ,pkg-names))
-)
+    `(--map (fast-exec/*enable-builtin-support-function* it) (quote ,pkg-names))
+    )
 
 
 (defun fast-exec/unregister-keymap-func (func)
-"Remove `FUNC` from `fast-exec`' func chain for undefine keymaps to `fast-exec`.
+    "Undefine `FUNC`'s keymaps.
 `FUNC` is function, which taked nothing, and gives collection of
 `full-commands`.  I am not use for this situation basic list, because
 if user change mine list of keymaps, for valid updating
@@ -236,7 +250,7 @@ updating any function `fast-exec/full-commands` set to nil, and all functions
 
 
 (defun fast-exec/clean-function-chain (&optional functions-add-after)
-    "Clean `keymap-function-chain`, and add `FUNCTIONS-ADD-AFTER` after cleaning."
+    "Clean `keymap-function-chain`, and add `FUNCTIONS-ADD-AFTER` after."
     (interactive (list nil)) ; Ignore `functions-add-after` in interactive call
     (setq fast-exec/keymap-function-chain functions-add-after)
     (setq fast-exec/full-commands nil)
