@@ -45,7 +45,8 @@
     )
 
 
-(defcustom fast-exec/buffer-name "*fast-exec view candidates to run command*"
+(defcustom fast-exec/hints-buffer-name
+  "*fast-exec view candidates to run command*"
   "Name of buffer that created for asking user char of word of command."
   :group 'fast-exec
   :type 'string)
@@ -58,7 +59,7 @@
 
 
 (defcustom fast-exec/full-commands nil
-  "This is list of FULL COMMANDS.
+  "This is list of FULL COMMANDS.  DON'T TOUCH, PLEASE!
 FULL COMMAND is command function and list of char for type and words for view."
   :group 'fast-exec
   :type '(repeat (command '(repeat char string))))
@@ -79,11 +80,22 @@ FULL COMMAND is command function and list of char for type and words for view."
            (nth-words-of-commands
             (fast-exec/nth-words-of-full-commands full-commands n))
            (unique-nth-words (delete-dups nth-words-of-commands))
+           (previous-n (max (- n 1) 0))
+           (previous-words
+            (if (= n 0)
+                nil
+                (fast-exec/nth-words-of-full-commands
+                 full-commands
+                 previous-n)))
+           (unique-previous-words (delete-dups previous-words))
            (joined-nth-words
-            (fast-exec-str/join-strings " | " unique-nth-words)))
+            (fast-exec-str/join-strings " | " unique-nth-words))
+           (joined-previous-words
+            (fast-exec-str/join-strings " | " unique-previous-words)))
+
         (s-lex-format
-         "${char-as-str}                      ${joined-nth-words}"))
-    )
+         "${joined-previous-words} | ${char-as-str} |      ${joined-nth-words}")
+    ))
 
 
 (defun fast-exec/*to-string-groups-by-nth-char-full-commands* (groups n)
@@ -93,7 +105,7 @@ FULL COMMAND is command function and list of char for type and words for view."
     )
 
 
-(defun fast-exec/*to-string-full-commands-as-candidates-with-nth-chars*
+(defun fast-exec/*to-string-full-commands-as-hints-with-nth-chars*
     (full-commands n)
     "To str `FULL-COMMANDS` as hints for typing `N`-th char of commands' names."
     (s-join "\n"
@@ -102,39 +114,49 @@ FULL COMMAND is command function and list of char for type and words for view."
              n)))
 
 
-(defun fast-exec/*insert-full-commands-as-candidates-with-nth-chars*
+(defun fast-exec/*insert-full-commands-as-hints-with-nth-chars*
     (full-commands n)
     "Insert `FULL-COMMANDS` as hints for typing `N`-th char in commands' names."
     (insert
-     (fast-exec/*to-string-full-commands-as-candidates-with-nth-chars*
+     (fast-exec/*to-string-full-commands-as-hints-with-nth-chars*
       full-commands n))
     )
 
 
-(defun fast-exec/*view-full-commands-as-candidates-with-nth-chars-in-new-buffer*
+(defun align-repeat (start end regexp)
+ "Repeat alignment with respect to the given regular expression `REGEXP`.
+Call to region begin from `START` and end to `END`.
+Code from: https://www.emacswiki.org/emacs/AlignCommands#h5o-2"
+    (interactive "r\nsAlign regexp: ")
+    (align-regexp start end
+                  (concat "\\(\\s-*\\)" regexp) 1 1 t))
+
+
+(defun fast-exec/*view-full-commands-as-hints-with-nth-chars-in-new-buffer*
     (full-commands n)
     "View `FULL-COMMANDS` as candidates with `N`-th character.
 For executing in `fast-exec/exec` command."
-    (let ((new-buffer (generate-new-buffer fast-exec/buffer-name))
-          (inhibit-read-only t))
-        (progn
-            (switch-to-buffer new-buffer)
-            (funcall 'fundamental-mode)
-            (fast-exec/*insert-full-commands-as-candidates-with-nth-chars*
-             full-commands
-             n)))
+    (let ((new-buffer (generate-new-buffer fast-exec/hints-buffer-name)))
+        (switch-to-buffer new-buffer)
+        (funcall 'fundamental-mode)
+        (fast-exec/*insert-full-commands-as-hints-with-nth-chars*
+         full-commands
+         n)
+        (align-repeat (point-min) (point-max) "      ")
+        (align-repeat (point-min) (point-max) "| . |")
+        (highlight-regexp "| . |" 'outline-6))
     )
 
 
 (defun fast-exec/*completing-read-full-command-nth-part* (prompt candidates n)
     "Ask full command's `N`-th chars of `CANDIDATES` from user  with `PROMPT`."
-    (fast-exec/*view-full-commands-as-candidates-with-nth-chars-in-new-buffer*
+    (fast-exec/*view-full-commands-as-hints-with-nth-chars-in-new-buffer*
      candidates
      n)
 
     (prog1
-     (read-char)
-     (kill-buffer fast-exec/buffer-name))
+        (read-char)
+        (kill-buffer fast-exec/hints-buffer-name))
     )
 
 
