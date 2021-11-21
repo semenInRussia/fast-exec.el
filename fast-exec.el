@@ -71,9 +71,23 @@ FULL COMMAND is command function and list of char for type and words for view."
   :type 'string)
 
 
+(defcustom fast-exec/backward-step-key 127
+  "Key (1 char) for go to backward step of fast-exec/exec.
+Defaults to: DEL (backspace)."
+  :group 'fast-exec
+  :type 'char)
+
+
+(defcustom fast-exec/exit-key 48
+  "Key (1 char) for exit fast-exec/exec.
+Defaults to: 0 (zero)."
+  :group 'fast-exec
+  :type 'char)
+
+
 (defun fast-exec/*to-string-nth-char-and-full-commands*
     (char-and-full-commands n)
-    "To string grouped by character of `N`-th word of name `full-commands`."
+    "To str grouped by char of `N`-th word of name `CHAR-AND-FULL-COMMANDS`."
 
     (let* ((char-as-str (char-to-string (-first-item char-and-full-commands)))
            (full-commands (cdr char-and-full-commands))
@@ -93,7 +107,7 @@ FULL COMMAND is command function and list of char for type and words for view."
 
         (s-lex-format
          "${previous-word} | ${char-as-str} | ${joined-nth-words}")
-    ))
+        ))
 
 
 (defun fast-exec/*to-string-groups-by-nth-char-full-commands* (groups n)
@@ -122,7 +136,7 @@ FULL COMMAND is command function and list of char for type and words for view."
 
 
 (defun fast-exec/*dev-align-regexp* (start end regexp)
- "Alignment with respect to the given regular expression `REGEXP`.
+    "Alignment with respect to the given regular expression `REGEXP`.
 Call to region begin from `START` and end to `END`.
 Part of Code got from: https://www.emacswiki.org/emacs/AlignCommands#h5o-2"
     (interactive "r\nsAlign regexp: ")
@@ -159,23 +173,37 @@ For executing in `fast-exec/exec` command."
 
 
 (defun fast-exec/exec
-    (&optional full-commands typed-chars-num char-of-command-word)
-    "Execute command, command searching from `CHAR-OF-COMMAND-WORD`."
+    (&optional full-commands typed-chars-num)
+    "Execute command.  Main comand of `fast-exec.el`.
+Command searching in `FULL-COMMANDS`.  Commands limit depends on
+`TYPED-CHARS-NUM`."
     (interactive)
-
     (setq typed-chars-num (or typed-chars-num 0))
     (setq full-commands (or full-commands fast-exec/full-commands))
-
-    (setq char-of-command-word
+    (setq char
           (fast-exec/*completing-read-full-command-nth-part*
            "Enter Character, Please (: " full-commands typed-chars-num))
 
+    (cond
+      ((= char fast-exec/backward-step-key)
+       (fast-exec/exec nil (- typed-chars-num 1))
+       (message "Go to backward STEP!!!!!"))
+      ((= char fast-exec/exit-key)
+       (message "Exit from fast-exec ... Good By :0"))
+      (t
+       (fast-exec/*handle-nth-char-of-commands*
+        full-commands
+        char
+        typed-chars-num))))
+
+(defun fast-exec/*handle-nth-char-of-commands* (commands char n)
+    "Handle `CHAR` of `N`-th word of command from `COMMANDS`."
+    (interactive)
     (let ((suitable-full-commands
            (fast-exec/full-commands-with-excepted-nth-char
             full-commands
-            char-of-command-word
+            char
             typed-chars-num)))
-
         (pcase (length suitable-full-commands)
             (0 (message
                 "Your command not found, we are back you to previous char!")
@@ -187,7 +215,7 @@ For executing in `fast-exec/exec` command."
 
 
 (defun fast-exec/register-keymap-func (func)
-    "Add `FUNC` to `fast-exec`' func chain for defining keymaps to `fast-exec`.
+"Add `FUNC` to `fast-exec`' func chain for defining keymaps to `fast-exec`.
 `FUNC` is function, which taked nothing, and gives collection of
 `full-commands`.  I am not use for this situation basic list, because
 if user change mine list of keymaps, for valid updating
@@ -196,9 +224,9 @@ but if user use funcs and `fast-exec` use chain of functions, then after
 updating any function `fast-exec/full-commands` set to nil, and all functions
  call again. Example:
 `(fast-exec/register-keymap-func 'foo)`."
-    (unless (-contains? fast-exec/keymap-function-chain func)
-        (add-to-list 'fast-exec/keymap-function-chain func))
-    )
+(unless (-contains? fast-exec/keymap-function-chain func)
+    (add-to-list 'fast-exec/keymap-function-chain func))
+)
 
 
 (defmacro fast-exec/register-some-keymap-funcs (&rest funcs)
