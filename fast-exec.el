@@ -155,10 +155,11 @@ For executing in `fast-exec/exec` command."
         (fast-exec/*insert-full-commands-as-hints-with-nth-chars*
          full-commands
          n)
+        (highlight-regexp "| . | ." 'hi-black-b)
+        (highlight-regexp "| . |" 'outline-1)
+        (highlight-regexp "| . |" 'hi-red-b)
         (fast-exec/*dev-align-regexp* (point-min) (point-max) "| . |")
-        (fast-exec/*dev-align-regexp* (point-min) (point-max) " ")
-        (highlight-regexp "| . |" 'outline-6))
-    )
+        ))
 
 
 (defun fast-exec/*completing-read-full-command-nth-part* (prompt candidates n)
