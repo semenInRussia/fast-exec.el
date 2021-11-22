@@ -101,7 +101,7 @@ AUTHOR: XahLee http://xahlee.info"
 (defun fast-exec/define-standard-keys ()
     "Define some useful \"keymaps\" for `fast-exec.el`."
     (interactive)
-    
+
     (fast-exec/some-commands
      ("Revert Buffer" revert-buffer)
      ("Enable Auto Revert Mode" auto-revert-mode)

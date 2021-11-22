@@ -35,16 +35,22 @@ WARNING! be caruful with case of `COMMAND-NAME` words of name in first lower
 character will ignored as unnecassary."
     (let* ((command-words
             (s-split-words command-name))
-           (command-important-parts
-            (--map
-             (fast-exec-str/join-strings " " it)
-             (-partition-before-pred
-              'fast-exec-str/first-letter-upper-p command-words)))
-           (chars-of-command-important-parts
-            (--map (string-to-char (s-downcase it)) command-important-parts)))
+           (command-important-parts (--map (fast-exec-str/join-strings " " it)
+                                           (-partition-before-pred
+                                            'fast-exec-str/first-letter-upper-p
+                                            command-words)))
+           (chars-of-command-important-parts (--map (string-to-char
+                                                     (s-downcase it))
+                                                    command-important-parts))
+           (command-name-initials (fast-exec-str/chars-to-string
+                                   chars-of-command-important-parts)))
         (list
          command
-         (-zip chars-of-command-important-parts command-important-parts))))
+         (-zip chars-of-command-important-parts command-important-parts)
+         command-name
+         command-name-initials
+         (length chars-of-command-important-parts)))
+    )
 
 
 (defmacro fast-exec/some-commands (&rest names-and-commands)
@@ -52,6 +58,36 @@ character will ignored as unnecassary."
     `(--map
       (fast-exec/full-command (-first-item it) (-second-item it))
       (quote ,names-and-commands)))
+
+
+(defun fast-exec/full-command-name (command)
+    "Get name of full `COMMAND`."
+    (-third-item command)
+    )
+
+(defun fast-exec/full-command-name-initials (command)
+    "Get initials of `COMMAND`'s name."
+    (-fourth-item command)
+    )
+
+
+(defun fast-exec/initials-of-some-commands-names (commands)
+    "Get initials of names of `COMMANDS`."
+    (-map 'fast-exec/full-command-name-initials
+          commands)
+    )
+
+
+(defun fast-exec/full-command-name-count-words (command)
+    "Count amount of words of `COMMAND`'s name."
+    (-fifth-item command)
+    )
+
+
+(defun fast-exec/count-words-of-some-commands-names (commands)
+    "Count amount of words of `COMMANDS`' names."
+    (-map 'fast-exec/full-command-name-count-words commands)
+    )
 
 
 (defun fast-exec/full-command-nth-char-and-word (command n)
@@ -72,12 +108,6 @@ character will ignored as unnecassary."
     )
 
 
-(defun fast-exec/count-words-of-command-name (command)
-    "Count words of full `COMMAND`'s name."
-    (length (-second-item command))
-    )
-
-
 (defun fast-exec/full-command-chars-and-words (command)
     "Get chars and respective words of full `COMMAND`.
 Example:
@@ -88,20 +118,6 @@ command = (fast-exec/full-command \"Check Parens\" 'check-parens)
     '((?c . \"Check\") (?p . \"Parens\"))
 `"
     (-second-item command)
-    )
-
-
-(defun fast-exec/command-name (command)
-    "Get name of full `COMMAND`."
-    (fast-exec-str/join-strings
-     " "
-     (-map 'cdr (fast-exec/full-command-chars-and-words command)))
-    )
-
-
-(defun fast-exec/initials-of-command-name (command)
-    "Return initials of full `COMMAND`'s name."
-    (s-downcase (s-word-initials (fast-exec/command-name command)))
     )
 
 

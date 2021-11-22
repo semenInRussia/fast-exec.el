@@ -35,7 +35,9 @@
 (require 's)
 
 (require 'fast-exec-full-commands)
-
+(require 'fast-exec-str)
+(require 'fast-exec-functools)
+(require 'fast-exec-hashsets)
 
 (defgroup fast-exec nil
     "Very Fast Execute Commands!."
@@ -95,19 +97,24 @@ Defaults to: 0 (zero)."
                                    full-commands n))
            (unique-nth-words (delete-dups nth-words-of-commands))
            (previous-n (max (- n 1) 0))
-           previous-word
+           previous-words
+           joined-previous-words
            (joined-nth-words
             (fast-exec-str/join-strings " | " unique-nth-words)))
 
         (if (= n 0)
-            (setq previous-word "")
-            (setq previous-word
-                  (fast-exec/first-full-command-nth-word full-commands
-                                                         previous-n))
+            (setq joined-previous-words "")
+            (progn (setq previous-words
+                         (delete-dups
+                          (fast-exec/nth-words-of-full-commands full-commands
+                                                                previous-n)))
+                   (setq joined-previous-words (fast-exec-str/join-strings
+                                                " | "
+                                                previous-words)))
             )
 
         (s-lex-format
-         "${previous-word} | ${char-as-str} | ${joined-nth-words}")
+         "${joined-previous-words} | ${char-as-str} | ${joined-nth-words}")
         ))
 
 
@@ -225,7 +232,7 @@ This is mean: Extend `FULL-COMMANDS` and decrease typed char of command: `N`."
 
     (let* ((first-command (-first-item full-commands))
            (command-all-initials (string-to-list
-                                  (fast-exec/initials-of-command-name
+                                  (fast-exec/full-command-name-initials
                                    first-command)))
            (command-initials (-slice command-all-initials 0 n))
            (enumerated-command-initials (fast-exec-functools/enumerate
@@ -287,7 +294,6 @@ updating any function `fast-exec/full-commands` set to nil, and all functions
 Examples of `PKG-NAME`:
 * yasnippet
 * projectile."
-
     `(fast-exec/*enable-builtin-support-function* ',pkg-name)
     )
 
