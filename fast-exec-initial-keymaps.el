@@ -75,6 +75,8 @@
     (interactive "F")
     (rename-file (buffer-file-name)
                  new-name)
+    (find-fi
+     )
     )
 
 

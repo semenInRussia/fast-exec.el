@@ -72,6 +72,39 @@ character will ignored as unnecassary."
     )
 
 
+(defun fast-exec/count-words-of-command-name (command)
+    "Count words of full `COMMAND`'s name."
+    (length (-second-item command))
+    )
+
+
+(defun fast-exec/full-command-chars-and-words (command)
+    "Get chars and respective words of full `COMMAND`.
+Example:
+`
+command = (fast-exec/full-command \"Check Parens\" 'check-parens)
+
+(fast-exec/full-command-chars-and-words command) =>
+    '((?c . \"Check\") (?p . \"Parens\"))
+`"
+    (-second-item command)
+    )
+
+
+(defun fast-exec/command-name (command)
+    "Get name of full `COMMAND`."
+    (fast-exec-str/join-strings
+     " "
+     (-map 'cdr (fast-exec/full-command-chars-and-words command)))
+    )
+
+
+(defun fast-exec/initials-of-command-name (command)
+    "Return initials of full `COMMAND`'s name."
+    (s-downcase (s-word-initials (fast-exec/command-name command)))
+    )
+
+
 (defun fast-exec/full-command-nth-char (command n)
     "Return first character of `N`-th word of `COMMAND`'s name."
     (-first-item (fast-exec/full-command-nth-char-and-word command n))

@@ -173,20 +173,21 @@ For executing in `fast-exec/exec` command."
 
 
 (defun fast-exec/exec
-    (&optional full-commands typed-chars-num)
-    "Execute command.  Main comand of `fast-exec.el`.
-Command searching in `FULL-COMMANDS`.  Commands limit depends on
-`TYPED-CHARS-NUM`."
+    (&optional full-commands typed-chars-num char)
+    "Execute command and return `limited-full-commands`.
+Main comand of `fast-exec.el`.  Command searching in `FULL-COMMANDS`.  Commands
+limit depends on `TYPED-CHARS-NUM` and `CHAR`."
     (interactive)
     (setq typed-chars-num (or typed-chars-num 0))
     (setq full-commands (or full-commands fast-exec/full-commands))
     (setq char
-          (fast-exec/*completing-read-full-command-nth-part*
-           "Enter Character, Please (: " full-commands typed-chars-num))
+          (or char (fast-exec/*completing-read-full-command-nth-part*
+                    "Enter Character, Please (: "
+                    full-commands typed-chars-num)))
 
     (cond
       ((= char fast-exec/backward-step-key)
-       (fast-exec/exec nil (- typed-chars-num 1))
+       (fast-exec/*backward-step* full-commands typed-chars-num)
        (message "Go to backward STEP!!!!!"))
       ((= char fast-exec/exit-key)
        (message "Exit from fast-exec ... Good By :0"))
@@ -196,26 +197,50 @@ Command searching in `FULL-COMMANDS`.  Commands limit depends on
         char
         typed-chars-num))))
 
+
 (defun fast-exec/*handle-nth-char-of-commands* (commands char n)
     "Handle `CHAR` of `N`-th word of command from `COMMANDS`."
     (interactive)
     (let ((suitable-full-commands
            (fast-exec/full-commands-with-excepted-nth-char
-            full-commands
+            commands
             char
-            typed-chars-num)))
+            n)))
         (pcase (length suitable-full-commands)
             (0 (message
                 "Your command not found, we are back you to previous char!")
-               (fast-exec/exec full-commands typed-chars-num))
+               (fast-exec/exec full-commands n))
             (1 (message "Your command found! :) ... Executing")
                (fast-exec/call-first-full-command suitable-full-commands))
-            (_ (fast-exec/exec suitable-full-commands (+ typed-chars-num 1)))
+            (_ (fast-exec/exec suitable-full-commands (+ n 1)))
             )))
 
 
+(defun fast-exec/*backward-step* (full-commands n)
+    "Go to backward step in `fast-exec`.
+This is mean: Extend `FULL-COMMANDS` and decrease typed char of command: `N`."
+    (setq n (- n 1))
+
+    (let* ((first-command (-first-item full-commands))
+           (command-all-initials (string-to-list
+                                  (fast-exec/initials-of-command-name
+                                   first-command)))
+           (command-initials (-slice command-all-initials 0 n))
+           (enumerated-command-initials (fast-exec-functools/enumerate
+                                         command-initials))
+           (suitable-commands (--reduce-from
+                               (fast-exec/full-commands-with-excepted-nth-char
+                                acc
+                                (cdr it)
+                                (-first-item it))
+                               fast-exec/full-commands
+                               enumerated-command-initials)))
+        (fast-exec/exec suitable-commands n))
+    )
+
+
 (defun fast-exec/register-keymap-func (func)
-"Add `FUNC` to `fast-exec`' func chain for defining keymaps to `fast-exec`.
+    "Add `FUNC` to `fast-exec`' func chain for defining keymaps to `fast-exec`.
 `FUNC` is function, which taked nothing, and gives collection of
 `full-commands`.  I am not use for this situation basic list, because
 if user change mine list of keymaps, for valid updating
@@ -224,9 +249,9 @@ but if user use funcs and `fast-exec` use chain of functions, then after
 updating any function `fast-exec/full-commands` set to nil, and all functions
  call again. Example:
 `(fast-exec/register-keymap-func 'foo)`."
-(unless (-contains? fast-exec/keymap-function-chain func)
-    (add-to-list 'fast-exec/keymap-function-chain func))
-)
+    (unless (-contains? fast-exec/keymap-function-chain func)
+        (add-to-list 'fast-exec/keymap-function-chain func))
+    )
 
 
 (defmacro fast-exec/register-some-keymap-funcs (&rest funcs)
