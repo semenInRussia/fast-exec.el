@@ -91,8 +91,8 @@ Defaults to: 0 (zero)."
 
     (let* ((char-as-str (char-to-string (-first-item char-and-full-commands)))
            (full-commands (cdr char-and-full-commands))
-           (nth-words-of-commands
-            (fast-exec/nth-words-of-full-commands full-commands n))
+           (nth-words-of-commands (fast-exec/nth-words-of-full-commands
+                                   full-commands n))
            (unique-nth-words (delete-dups nth-words-of-commands))
            (previous-n (max (- n 1) 0))
            previous-word
@@ -102,7 +102,8 @@ Defaults to: 0 (zero)."
         (if (= n 0)
             (setq previous-word "")
             (setq previous-word
-                  (fast-exec/first-full-command-nth-word full-commands n))
+                  (fast-exec/first-full-command-nth-word full-commands
+                                                         previous-n))
             )
 
         (s-lex-format
