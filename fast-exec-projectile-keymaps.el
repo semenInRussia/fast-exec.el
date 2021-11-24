@@ -29,7 +29,7 @@
 (defun fast-exec/define-projectile-keys ()
     "Define some useful \"keymaps\" for projectile and `fast-exec.el`."
     (interactive)
-    
+
     (fast-exec/some-commands
      ("Projectile Switch Project" projectile-switch-project)
      ("Projectile Test Current Project" projectile-test-project)
@@ -45,7 +45,7 @@
      ("Projectile Discover Projects in Search Path"
       projectile-discover-projects-in-search-path)
      ("Projectile Discover Projects in Current Directory"
-      projectile-discover-projects-in-directory)
+      *projectile-discover-projects-in-current-directory*)
      ("Projectile Edit Dir Locale" projectile-edit-dir-locals)
      ("Projectile To Implementation or Test"
       projectile-toggle-between-implementation-and-test)
@@ -54,6 +54,13 @@
      ("Projectile Run Command in Root" projectile-run-command-in-root)
      ("Projectile Run Project" projectile-run-project)
      )
+    )
+
+
+(defun *projectile-discover-projects-in-current-directory* ()
+    "Discover projectile's projects in directory of current open file."
+    (interactive)
+    (projectile-discover-projects-in-directory default-directory)
     )
 
 
