@@ -193,7 +193,6 @@ limit depends on `TYPED-CHARS-NUM` and `CHAR`."
           (or char (fast-exec/*completing-read-full-command-nth-part*
                     "Enter Character, Please (: "
                     full-commands typed-chars-num)))
-
     (cond
       ((= char fast-exec/backward-step-key)
        (fast-exec/*backward-step* full-commands typed-chars-num)
@@ -201,10 +200,9 @@ limit depends on `TYPED-CHARS-NUM` and `CHAR`."
       ((= char fast-exec/exit-key)
        (message "Exit from fast-exec ... Good By :0"))
       (t
-       (fast-exec/*handle-nth-char-of-commands*
-        full-commands
-        char
-        typed-chars-num))))
+       (fast-exec/*handle-nth-char-of-commands* full-commands
+                                                char
+                                                typed-chars-num))))
 
 
 (defun fast-exec/*handle-nth-char-of-commands* (commands char n)
@@ -352,6 +350,7 @@ updating any function `fast-exec/full-commands` set to nil, and all functions
 (require 'fast-exec-projectile-keymaps)
 (require 'fast-exec-magit-keymaps)
 (require 'fast-exec-flycheck-keymaps)
+(require 'fast-exec-haskell-mode-keymaps)
 
 (provide 'fast-exec)
 ;;; fast-exec.el ends here
