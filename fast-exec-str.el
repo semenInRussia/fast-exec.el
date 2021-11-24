@@ -19,11 +19,10 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
 (require 's)
-
 
 
 (defun fast-exec-str/first-letter (s)
@@ -46,6 +45,12 @@
 (defun fast-exec-str/join-strings (sep strings)
     "Join `STRINGS`, by `SEP`."
     (fast-exec-str/concat-strings (-interpose sep strings))
+    )
+
+
+(defun fast-exec-str/chars-to-string (chars)
+    "Transform list of `CHARS` to string."
+    (fast-exec-str/concat-strings (-map 'char-to-string chars))
     )
 
 
