@@ -24,9 +24,13 @@ For get start paste folowed code to your Emacs init file:
 
 ## Usage
 
-By default, for run `fast-exec/exec` you must press to `M-a` keymap, but you can change this keymap.
+By default, for run `fast-exec/exec` you must press to `M-a` keymap, but you can change this keymap (see below).
 
-`fast-exec/exec` is main function of `fast-exec.el`, it's view hints buffer, which contain some pair of letter and command's name, letter you must press on letter for running command with corresponding name.
+`fast-exec/exec` is main function of `fast-exec.el`, it's view hints buffer, which contain some previouse command's word, letter and current command's name's word, you must:
+
+* press on letter, which marked blue color for running command with corresponding name or if this is not ending word of command's name, then go to next step.
+* press `BACKSPACE` for go to backward command's name's word.
+* press `0` (`ZERO`) for exit from `fast-exec.el`.
 
 
 ## Support of Very Famous Packages
@@ -37,6 +41,7 @@ By default, `fast-exec` contain only keymaps for vanila Emacs commands, but you 
 * [Yasnippet](https://github.com/joaotavora/yasnippet)
 * [Magit](https://github.com/magit/magit)
 * [Flycheck](https://www.flycheck.org/)
+* [Haskell Mode](https://github.com/haskell/haskell-mode) 
 
 For enable this support, paste this code to your emacs' config.
 
