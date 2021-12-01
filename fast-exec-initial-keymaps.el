@@ -75,8 +75,6 @@
     (interactive "F")
     (rename-file (buffer-file-name)
                  new-name)
-    (find-fi
-     )
     )
 
 
@@ -97,6 +95,17 @@ AUTHOR: XahLee http://xahlee.info"
         (setq p2 (point))
         (delete-region p1 p2)))
 
+(defun *map-query-replace-regexp-in-whole-buffer* ()
+    "Replace some match for `regexp` with various strings, in current buffer.
+This command works like `query-replace-regexp' except that
+each successive replacement uses the next successive replacement string,
+wrapping around from the last such string to the first."
+    (interactive)
+    (save-excursion
+        (beginning-of-buffer)
+        (call-interactively 'map-query-replace-regexp))
+    )
+
 
 (defun fast-exec/define-standard-keys ()
     "Define some useful \"keymaps\" for `fast-exec.el`."
@@ -112,8 +121,8 @@ AUTHOR: XahLee http://xahlee.info"
      ("Move Current File" *rename-current-file*)
      ("Indent Current File" *indent-current-file*)
      ("Indent Selected Region" indent-region)
-     ("Search and Replace String" replace-string)
-     ("Replace Regexp" replace-regexp)
+     ("Search and Replace Regexp"
+      *map-query-replace-regexp-in-whole-buffer*)
      ("Enable Whitespace Mode" *enable-whitespace-mode*)
      ("Disable Whitespace Mode" *disable-whitespace-mode*)
      ("Run Eshell" eshell)
