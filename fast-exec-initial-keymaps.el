@@ -41,7 +41,7 @@
     "If `DELETE-P`, Delete current file from FS and close its."
     (interactive (let ((bname (or (buffer-file-name) "unitled")))
                      (list
-                      (y-or-n-p (s-lex-format "Delete file ${bname} ? " )))))
+                      (y-or-n-p (s-lex-format "Delete file \"${bname}\" ? ")))))
 
     (when delete-p
         (delete-file (buffer-name))
@@ -135,9 +135,11 @@ wrapping around from the last such string to the first."
      ("Transpose Regions" transpose-regions)
      ("Transpose Lines" transpose-lines)
      ("Transpose Sexps" transpose-sexps)
+     ("Convert Tabs to Spaces" untabify)
      ("Check Parens" check-parens)
      ("Align by Regular Expresion" align-regexp)
-     ("Open Eshell" eshell))
+     ("Open Eshell" eshell)
+     ("Toggle Truncate Lines" toggle-truncate-lines))
     )
 
 
