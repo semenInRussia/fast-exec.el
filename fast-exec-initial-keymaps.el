@@ -125,7 +125,6 @@ wrapping around from the last such string to the first."
       *map-query-replace-regexp-in-whole-buffer*)
      ("Enable Whitespace Mode" *enable-whitespace-mode*)
      ("Disable Whitespace Mode" *disable-whitespace-mode*)
-     ("Run Eshell" eshell)
      ("Delete Blank Lines" *delete-blank-lines*)
      ("Delete Duplicated Lines" delete-duplicate-lines)
      ("Delete Lines Contains" delete-matching-lines)
@@ -139,6 +138,7 @@ wrapping around from the last such string to the first."
      ("Check Parens" check-parens)
      ("Align by Regular Expresion" align-regexp)
      ("Open Eshell" eshell)
+     ("Open Calculator" calc)
      ("Toggle Truncate Lines" toggle-truncate-lines))
     )
 
