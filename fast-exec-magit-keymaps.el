@@ -29,9 +29,10 @@
 (defun fast-exec/define-magit-keys ()
     "Define some useful \"keymaps\" for magit and `fast-exec.el`."
     (interactive)
-    
+
     (fast-exec/some-commands
-     ("Open Magit" magit-status)
+     ("Open Magit Status" magit-status)
+     ("Open Magit Log" magit-log)
      ))
 
 
