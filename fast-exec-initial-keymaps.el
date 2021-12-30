@@ -138,7 +138,9 @@ wrapping around from the last such string to the first."
      ("Check Parens" check-parens)
      ("Align by Regular Expresion" align-regexp)
      ("Open Eshell" eshell)
+     ("Open Ielm" ielm)
      ("Open Calculator" calc)
+     ("Unload Feature" unload-feature)
      ("Toggle Truncate Lines" toggle-truncate-lines))
     )
 
