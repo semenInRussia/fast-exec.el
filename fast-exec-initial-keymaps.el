@@ -141,7 +141,8 @@ wrapping around from the last such string to the first."
      ("Open Ielm" ielm)
      ("Open Calculator" calc)
      ("Unload Feature" unload-feature)
-     ("Toggle Truncate Lines" toggle-truncate-lines))
+     ("Toggle Truncate Lines" toggle-truncate-lines)
+     ("Fast Exec Initialize" fast-exec/initialize))
     )
 
 
