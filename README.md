@@ -42,6 +42,7 @@ By default, `fast-exec` contain only keymaps for vanila Emacs commands, but you 
 * [Magit](https://github.com/magit/magit)
 * [Flycheck](https://www.flycheck.org/)
 * [Haskell Mode](https://github.com/haskell/haskell-mode) 
+* [skeletor](https://github.com/chrisbarrett/skeletor.el "this is cool package!")
 
 For enable this support, paste this code to your emacs' config.
 

@@ -5,7 +5,7 @@
 ;; Author: semenInRussia <hrams205@gmail.com>
 ;; Version: 0.0.1
 ;; Packages-Requires: ((dash "2.18.0")
-;;                     (s     "1.12.0"))
+;;                     (s    "1.12.0"))
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -37,7 +37,6 @@
 (require 'fast-exec-full-commands)
 (require 'fast-exec-str)
 (require 'fast-exec-functools)
-(require 'fast-exec-hashsets)
 
 (defgroup fast-exec nil
     "Very Fast Execute Commands!."
@@ -348,6 +347,7 @@ updating any function `fast-exec/full-commands` set to nil, and all functions
 
 (require 'fast-exec-yasnippet-keymaps)
 (require 'fast-exec-projectile-keymaps)
+(require 'fast-exec-skeletor-keymaps)
 (require 'fast-exec-magit-keymaps)
 (require 'fast-exec-flycheck-keymaps)
 (require 'fast-exec-haskell-mode-keymaps)

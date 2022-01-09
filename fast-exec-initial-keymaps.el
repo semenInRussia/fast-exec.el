@@ -22,9 +22,7 @@
 ;; This package define some useful "keymaps" for `fast-exec.el`.
 ;; Main function of this package is `fast-exec-define-standard-keys`.
 ;; For using this package, use folowed code of Emacs-Lisp:
-;; ```
-;; (fast-exec-define-standard-keys)
-;; ```
+
 ;;; Code:
 
 (require 'fast-exec)
@@ -110,7 +108,6 @@ wrapping around from the last such string to the first."
 (defun fast-exec/define-standard-keys ()
     "Define some useful \"keymaps\" for `fast-exec.el`."
     (interactive)
-
     (fast-exec/some-commands
      ("Revert Buffer" revert-buffer)
      ("Enable Auto Revert Mode" auto-revert-mode)
@@ -142,7 +139,8 @@ wrapping around from the last such string to the first."
      ("Open Calculator" calc)
      ("Unload Feature" unload-feature)
      ("Toggle Truncate Lines" toggle-truncate-lines)
-     ("Fast Exec Initialize" fast-exec/initialize))
+     ("Fast Exec Initialize" fast-exec/initialize)
+     ("Open Regexp Builder" regexp-builder))
     )
 
 
