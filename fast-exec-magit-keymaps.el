@@ -31,8 +31,8 @@
     (interactive)
 
     (fast-exec/some-commands
-     ("Open Magit Status" magit-status)
-     ("Open Magit Log" magit-log)
+     ("Open Magit Status" 'magit-status)
+     ("Open Magit Log" 'magit-log)
      ))
 
 

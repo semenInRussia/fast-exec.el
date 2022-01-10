@@ -55,9 +55,19 @@ character will ignored as unnecassary."
 
 (defmacro fast-exec/some-commands (&rest names-and-commands)
     "Get some commands with respective names from `NAMES-AND-COMMANDS`."
-    `(--map
-      (fast-exec/full-command (-first-item it) (-second-item it))
-      (quote ,names-and-commands)))
+    (setq names-and-commands
+          `(list ,@(-map (lambda (name-and-command)
+                            `(list ,@name-and-command)
+                            )
+                        names-and-commands))
+          )
+    `(--map (fast-exec/full-command (-first-item it)
+                                    (-second-item it))
+            ,names-and-commands))
+
+    ;; `(list ,@(--map (fast-exec/full-command (-first-item it)
+                                            ;; (-second-item it))
+                    ;; names-and-commands)))
 
 
 (defun fast-exec/full-command-name (command)

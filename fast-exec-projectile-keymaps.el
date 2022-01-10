@@ -28,32 +28,43 @@
 
 (defun fast-exec/define-projectile-keys ()
     "Define some useful \"keymaps\" for projectile and `fast-exec.el`."
-    (interactive)
-
-    (fast-exec/some-commands
-     ("Projectile Switch Project" projectile-switch-project)
-     ("Projectile Test Current Project" projectile-test-project)
-     ("Projectile Find File" projectile-find-file)
-     ("Projectile Search String" projectile-grep)
-     ("Projectile Open Version Controle" projectile-vc)
-     ("Projectile Open Dired" projectile-dired)
-     ("Projectile Search and Replace String" projectile-replace)
-     ("Projectile Search and Replace Regular Expression"
-      projectile-replace-regexp)
-     ("Projectile Complie Project"
-      project-compile-project)
-     ("Projectile Discover Projects in Search Path"
-      projectile-discover-projects-in-search-path)
-     ("Projectile Discover Projects in Current Directory"
-      *projectile-discover-projects-in-current-directory*)
-     ("Projectile Edit Dir Locale" projectile-edit-dir-locals)
-     ("Projectile To Implementation or Test"
-      projectile-toggle-between-implementation-and-test)
-     ("Projectile Run Install Commnad" projectile-install-project)
-     ("Projectile Close All Files of Project" projectile-kill-buffers)
-     ("Projectile Run Command in Root" projectile-run-command-in-root)
-     ("Projectile Run Project" projectile-run-project)
-     )
+    (-concat
+     (fast-exec/some-commands
+      ("Projectile Switch Project" (*projectile-or-helm-projectile-fun*
+                                    'switch-project))
+      ("Projectile Test Current Project" (*projectile-or-helm-projectile-fun*
+                                          'test-project))
+      ("Projectile Find File in Current Directory"
+       (*projectile-or-helm-projectile-fun* 'find-file))
+      ("Projectile Search String" (*projectile-or-helm-projectile-fun*
+                                   'grep))
+      ("Projectile Open Version Controle" (*projectile-or-helm-projectile-fun*
+                                           'vc))
+      ("Projectile Open Dired" (*projectile-or-helm-projectile-fun*
+                                'dired))
+      ("Projectile Search and Replace String"
+       (*projectile-or-helm-projectile-fun* 'replace))
+      ("Projectile Search and Replace Regular Expression"
+       (*projectile-or-helm-projectile-fun*
+        'replace-regexp))
+      ("Projectile Complie Project"
+       (*projectile-or-helm-projectile-fun* 'compile-project))
+      ("Projectile Discover Projects in Search Path"
+       'projectile-discover-projects-in-search-path)
+      ("Projectile Discover Projects in Current Directory"
+       '*projectile-discover-projects-in-current-directory*)
+      ("Projectile Edit Dir Locale" 'projectile-edit-dir-locals)
+      ("Projectile To Implementation or Test"
+       'projectile-toggle-between-implementation-and-test)
+      ("Projectile Run Install Commnad" 'projectile-install-project)
+      ("Projectile Close All Files of Project" 'projectile-kill-buffers)
+      ("Projectile Run Command in Root" 'projectile-run-command-in-root)
+      ("Projectile Run Project" 'projectile-run-project)
+      )
+     (with-eval-after-load 'helm-projectile
+         (fast-exec/some-commands
+          ("Projectile Find File in Known Project"
+           'helm-projectile-find-file-in-known-projects))))
     )
 
 
@@ -61,6 +72,18 @@
     "Discover projectile's projects in directory of current open file."
     (interactive)
     (projectile-discover-projects-in-directory default-directory)
+    )
+
+
+(defun *projectile-or-helm-projectile-fun* (symb)
+    "If has `helm-projectile-`+SYMB, then get its, else get `projectile-`+SYMB."
+    (let* ((symb-name (symbol-name symb))
+           (projectile-symb (intern (s-prepend "projectile-" symb-name)))
+           (helm-projectile-symb (intern (s-prepend "helm-projectile-"
+                                                    symb-name))))
+        (if (fboundp helm-projectile-symb)
+            helm-projectile-symb
+            projectile-symb))
     )
 
 

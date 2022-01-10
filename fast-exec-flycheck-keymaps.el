@@ -43,17 +43,15 @@
 
 (defun fast-exec/define-flycheck-keys ()
     "Define some useful \"keymaps\" for flycheck and `fast-exec.el`."
-    (interactive)
-
     (fast-exec/some-commands
-     ("Enable Flycheck" *turn-on-flycheck*)
-     ("Disable Flycheck" *turn-off-flycheck*)
-     ("Flycheck View List of Errors" flycheck-list-errors)
-     ("Flycheck Disable Checker" flycheck-disable-checker)
-     ("Flycheck Select Checker" flycheck-select-checker)
-     ("Flycheck Select Indication Mode" flycheck-set-indication-mode)
-     ("Flycheck Verify Checker" flycheck-verify-checker)
-     ("Flycheck Verify Setup" flycheck-verify-setup)
+     ("Enable Flycheck" '*turn-on-flycheck*)
+     ("Disable Flycheck" '*turn-off-flycheck*)
+     ("Flycheck View List of Errors" 'flycheck-list-errors)
+     ("Flycheck Disable Checker" 'flycheck-disable-checker)
+     ("Flycheck Select Checker" 'flycheck-select-checker)
+     ("Flycheck Select Indication Mode" 'flycheck-set-indication-mode)
+     ("Flycheck Verify Checker" 'flycheck-verify-checker)
+     ("Flycheck Verify Setup" 'flycheck-verify-setup)
      )
     )
 

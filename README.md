@@ -89,8 +89,8 @@ Function `fast-exec/register-keymap-func` take 1 argument: function, this functi
 (fast-exec/register-keymap-func (lambda ()
                                     (list (fast-exec/full-command "Call Foo" 'foo))))
 ; About function `fast-exec/full-command` read text below!
-
 ```
+
 
 Function `fast-exec/register-some-keymap-funcs` take infinity arguments, and do `fast-exec/register-keymap-func`, but add quote, Example:
 
@@ -131,10 +131,6 @@ For creating `full-command` you can use 2 folowed functions: `fast-exec/full-com
 ```emacs-lisp
 
 (fast-exec/some-commands
- ("Call Function Foo" foo)
- ("Call Function Bar" bar))
-;                     ^
-;                     |
-;                Not quote!
-
+ ("Call Function Foo" 'foo)
+ ("Call Function Bar" 'bar))
 ```

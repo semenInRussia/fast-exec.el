@@ -31,7 +31,7 @@
 (defun fast-exec/define-skeletor-keys ()
     "Define some useful \"keymaps\" for skeletor and `fast-exec.el`."
     (fast-exec/some-commands
-     ("New Project" skeletor-create-project)
+     ("New Project" 'skeletor-create-project)
      )
     )
 

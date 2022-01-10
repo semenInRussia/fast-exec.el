@@ -28,13 +28,11 @@
 
 (defun fast-exec/define-yasnippet-keys ()
     "Define some useful \"keymaps\" for `fast-exec.el`."
-    (interactive)
-    
     (fast-exec/some-commands
-     ("Yasnippet New Snippet" yas-new-snippet)
-     ("Yasnippet Visit Snippet" yas-visit-snippet-file)
-     ("Yasnippet Describe Tables" yas-describe-tables)
-     ("Yasnippet Reload All" yas-reload-all))
+     ("Yasnippet New Snippet" 'yas-new-snippet)
+     ("Yasnippet Visit Snippet" 'yas-visit-snippet-file)
+     ("Yasnippet Describe Tables" 'yas-describe-tables)
+     ("Yasnippet Reload All" 'yas-reload-all))
     )
 
 
