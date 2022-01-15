@@ -1,4 +1,4 @@
-;;; fast-exec --- Very Fast Executing Emacs Commands
+;;; fast-exec.el --- Very Fast Executing Emacs Commands
 
 ;; Copyright (C) 2021 Free Software Foundation, Inc.
 
@@ -351,6 +351,7 @@ updating any function `fast-exec/full-commands` set to nil, and all functions
 (require 'fast-exec-magit-keymaps)
 (require 'fast-exec-flycheck-keymaps)
 (require 'fast-exec-haskell-mode-keymaps)
+(require 'fast-exec-format-all-keymaps)
 
 (provide 'fast-exec)
 ;;; fast-exec.el ends here

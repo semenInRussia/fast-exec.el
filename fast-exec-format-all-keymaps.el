@@ -1,10 +1,8 @@
-;;; fast-exec-functools --- Functional functions which dash not contain
-
+;;; fast-exec-format-all-keymaps --- Additional to fast-exec, define "keymaps" for format-all
 ;; Copyright (C) 2021 Free Software Foundation, Inc.
 
 ;; Author: semenInRussia <hrams205@gmail.com>
 ;; Version: 0.0.1
-;; Packages-Requires: ((dash "2.19.1"))
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -20,15 +18,23 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+;; This package define some useful "keymaps" for `fast-exec.el`.
+;; Main function of this package is `fast-exec-define-format-all-keys`.
+;; For using this package, use folowed code of Emacs-Lisp:
+;; ```
+;; (fast-exec/register-keymap-func 'fast-exec-define-format-all-keys)
+;; ```
 
 ;;; Code:
-(require 'dash)
 
-(defun fast-exec-functools/enumerate (list)
-    "Enumerate elements of `LIST`."
-    (-zip (-iota (length list))
-          list)
+
+(defun fast-exec/define-format-all-keys ()
+    "Define some useful \"keymaps\" for `fast-exec.el`."
+    (fast-exec/some-commands
+     ("Format Buffer" 'format-all-buffer)
+     ("Format Region" 'format-all-region))
     )
 
-(provide 'fast-exec-functools)
-;;; fast-exec-functools.el ends here
+
+(provide 'fast-exec-format-all-keymaps)
+;;; fast-exec-format-all-keymaps.el ends here

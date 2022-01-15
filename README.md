@@ -43,6 +43,7 @@ By default, `fast-exec` contain only keymaps for vanila Emacs commands, but you 
 * [Flycheck](https://www.flycheck.org/)
 * [Haskell Mode](https://github.com/haskell/haskell-mode) 
 * [skeletor](https://github.com/chrisbarrett/skeletor.el "this is cool package!")
+* [format-all](https://github.com/lassik/emacs-format-all-the-code "cool Package for Format Code in 50+ languages")
 
 For enable this support, paste this code to your emacs' config.
 
