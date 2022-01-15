@@ -352,6 +352,8 @@ updating any function `fast-exec/full-commands` set to nil, and all functions
 (require 'fast-exec-flycheck-keymaps)
 (require 'fast-exec-haskell-mode-keymaps)
 (require 'fast-exec-format-all-keymaps)
+(require 'fast-exec-wikinforg-keymaps)
+(require 'fast-exec-suggest-keymaps)
 
 (provide 'fast-exec)
 ;;; fast-exec.el ends here
