@@ -1,4 +1,5 @@
 ;;; fast-exec-initial-keymaps --- Additional to fast-exec, define basic "keymaps"
+
 ;; Copyright (C) 2021 Free Software Foundation, Inc.
 
 ;; Author: semenInRussia <hrams205@gmail.com>
@@ -69,18 +70,36 @@
 
 
 (defun *rename-current-file* (new-name)
-    "Rename current open file to `NEW-NAME`."
-    (interactive "F")
-    (rename-file (buffer-file-name)
-                 new-name)
-    )
+    "Rename current open file to NEW-NAME."
+    (interactive (list (read-string "New name, please: "
+                                    (f-filename (buffer-file-name)))))
+    (let ((pos (point))
+          (dest (f-join default-directory new-name))
+          (source (buffer-file-name)))
+        (save-buffer)
+        (rename-file source dest)
+        (kill-buffer)
+        (find-file dest)
+        (goto-char pos)))
+
+
+(defun *move-current-file* (destination-dir)
+    "Move current open file to DESTINATION-DIR."
+    (interactive "D")
+    (let ((pos (point))
+          (source-file (buffer-file-name))
+          (destination-file (f-join destination-dir (buffer-name))))
+        (save-buffer)
+        (rename-file source-file destination-file)
+        (kill-buffer)
+        (find-file destination-file)
+        (goto-char pos)))
 
 
 (defun *indent-current-file* ()
     "Indent all content of current file."
     (interactive)
-    (indent-region-line-by-line (point-min) (point-max))
-    )
+    (indent-region-line-by-line (point-min) (point-max)))
 
 
 (defun *delete-blank-lines* ()
@@ -115,7 +134,7 @@ wrapping around from the last such string to the first."
      ("Delete the Whole File's Content" '*delete-whole-file-content*)
      ("Delete Current File" '*delete-current-file*)
      ("Rename Current File" '*rename-current-file*)
-     ("Move Current File" '*rename-current-file*)
+     ("Move Current File" '*move-current-file*)
      ("Indent Current File" '*indent-current-file*)
      ("Indent Selected Region" 'indent-region)
      ("Search and Replace Regexp"
@@ -140,8 +159,7 @@ wrapping around from the last such string to the first."
      ("Unload Feature" 'unload-feature)
      ("Toggle Truncate Lines" 'toggle-truncate-lines)
      ("Fast Exec Initialize" 'fast-exec/initialize)
-     ("Open Regexp Builder" 'regexp-builder))
-    )
+     ("Open Regexp Builder" 'regexp-builder)))
 
 
 
