@@ -1,5 +1,6 @@
 ;;; fast-exec-projectile-keymaps --- Support of projectile for "fast-exec"
-;; Copyright (C) 2021 Free Software Foundation, Inc.
+
+;; Copyright (C) 2021 semenInRussia
 
 ;; Author: semenInRussia <hrams205@gmail.com>
 ;; Version: 0.0.1
@@ -42,6 +43,8 @@
                                            'vc))
       ("Projectile Open Dired" (*projectile-or-helm-projectile-fun*
                                 'dired))
+      ("Projectile Open Eshell" (*projectile-or-helm-projectile-fun*
+                                'run-eshell))
       ("Projectile Search and Replace String"
        (*projectile-or-helm-projectile-fun* 'replace))
       ("Projectile Search and Replace Regular Expression"
@@ -59,20 +62,17 @@
       ("Projectile Run Install Commnad" 'projectile-install-project)
       ("Projectile Close All Files of Project" 'projectile-kill-buffers)
       ("Projectile Run Command in Root" 'projectile-run-command-in-root)
-      ("Projectile Run Project" 'projectile-run-project)
-      )
+      ("Projectile Run Project" 'projectile-run-project))
      (with-eval-after-load 'helm-projectile
          (fast-exec/some-commands
           ("Projectile Find File in Known Project"
-           'helm-projectile-find-file-in-known-projects))))
-    )
+           'helm-projectile-find-file-in-known-projects)))))
 
 
 (defun *projectile-discover-projects-in-current-directory* ()
     "Discover projectile's projects in directory of current open file."
     (interactive)
-    (projectile-discover-projects-in-directory default-directory)
-    )
+    (projectile-discover-projects-in-directory default-directory))
 
 
 (defun *projectile-or-helm-projectile-fun* (symb)
@@ -83,8 +83,7 @@
                                                     symb-name))))
         (if (fboundp helm-projectile-symb)
             helm-projectile-symb
-            projectile-symb))
-    )
+            projectile-symb)))
 
 
 (provide 'fast-exec-projectile-keymaps)
