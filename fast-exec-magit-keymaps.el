@@ -33,7 +33,7 @@
     (fast-exec/some-commands
      ("Open Magit Status" 'magit-status)
      ("Open Magit Log" 'magit-log)
-     ))
+     ("Magid Diff" 'magit-diff)))
 
 
 (provide 'fast-exec-magit-keymaps)
