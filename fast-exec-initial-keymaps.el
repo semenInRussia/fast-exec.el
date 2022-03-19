@@ -94,6 +94,19 @@
         (goto-char pos)))
 
 
+(defun fast-exec/move-something (source destination)
+    "Move SOURCE to DESTINATION, source may be wildcard regexp.
+Examples of SOURCE: *.docx, cool.tex"
+    (interactive
+     (list
+      (read-string "Enter source: " (buffer-file-name))
+      (read-directory-name "Enter destination: ")))
+    (let* ((sources (file-expand-wildcards source)))
+        (--each sources
+            (rename-file it destination)
+            (message "File %s moved!" (f-filename it)))))
+
+
 (defun *indent-current-file* ()
     "Indent all content of current file."
     (interactive)
@@ -158,7 +171,8 @@ wrapping around from the last such string to the first."
      ("Toggle Truncate Lines"      'toggle-truncate-lines)
      ("Visual Line"                'visual-line-mode)
      ("Fast Exec Initialize"       'fast-exec/initialize)
-     ("Open Regexp Builder"        'regexp-builder)))
+     ("Open Regexp Builder"        'regexp-builder)
+     ("Move Something"             'fast-exec/move-something)))
 
 
 
