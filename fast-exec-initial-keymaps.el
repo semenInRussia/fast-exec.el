@@ -32,47 +32,45 @@
 (defun *delete-whole-file-content* ()
     "Delete whole content of current open file/buffer."
     (interactive)
-    (kill-region (point-min) (point-max))
-    )
+    (kill-region (point-min) (point-max)))
 
 
 (defun *delete-current-file* (delete-p)
     "If `DELETE-P`, Delete current file from FS and close its."
-    (interactive (let ((bname (or (buffer-file-name) "unitled")))
-                     (list
-                      (y-or-n-p (s-lex-format "Delete file \"${bname}\" ? ")))))
+    (interactive
+     (let ((bname (or (buffer-file-name) "unitled")))
+         (list
+          (y-or-n-p (s-lex-format "Delete file \"${bname}\" ? ")))))
 
     (when delete-p
         (delete-file (buffer-name))
-        (kill-buffer (current-buffer)))
-    )
+        (kill-buffer (current-buffer))))
 
 
 (defun *kill-current-buffer* ()
     "Kill current open buffer."
     (interactive)
-    (kill-buffer (current-buffer))
-    )
+    (kill-buffer (current-buffer)))
 
 
 (defun *enable-whitespace-mode* ()
     "Enable `whitespace` mode."
     (interactive)
-    (whitespace-mode 38)
-    )
+    (whitespace-mode 38))
 
 
 (defun *disable-whitespace-mode* ()
     "Disable `whitespace` mode."
     (interactive)
-    (whitespace-mode 0)
-    )
+    (whitespace-mode 0))
 
 
 (defun *rename-current-file* (new-name)
     "Rename current open file to NEW-NAME."
-    (interactive (list (read-string "New name, please: "
-                                    (f-filename (buffer-file-name)))))
+    (interactive
+     (list
+      (read-string "New name, please: "
+                   (f-filename (buffer-file-name)))))
     (let ((pos (point))
           (dest (f-join default-directory new-name))
           (source (buffer-file-name)))
@@ -120,8 +118,7 @@ wrapping around from the last such string to the first."
     (interactive)
     (save-excursion
         (beginning-of-buffer)
-        (call-interactively 'map-query-replace-regexp))
-    )
+        (call-interactively 'map-query-replace-regexp)))
 
 
 (defun fast-exec/define-standard-keys ()
@@ -131,8 +128,7 @@ wrapping around from the last such string to the first."
      ("Revert Buffer"              'revert-buffer)
      ("Enable Auto Revert Mode"    'auto-revert-mode)
      ("Save All Files"             'save-some-buffers)
-     ("Delete the Whole File's Content"
-                                   '*delete-whole-file-content*)
+     ("Delete the Whole File's Content" '*delete-whole-file-content*)
      ("Delete Current File"        '*delete-current-file*)
      ("Rename Current File"        '*rename-current-file*)
      ("Move Current File"          '*move-current-file*)
@@ -157,6 +153,8 @@ wrapping around from the last such string to the first."
      ("Open Ielm"                  'ielm)
      ("Open Calculator"            'calc)
      ("Unload Feature"             'unload-feature)
+     ("Load Theme"                 'load-theme)
+     ("Rename Current Buffer"      'rename-buffer)
      ("Toggle Truncate Lines"      'toggle-truncate-lines)
      ("Visual Line"                'visual-line-mode)
      ("Fast Exec Initialize"       'fast-exec/initialize)
