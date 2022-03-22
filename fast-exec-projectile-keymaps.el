@@ -31,25 +31,24 @@
     "Define some useful \"keymaps\" for projectile and `fast-exec.el`."
     (-concat
      (fast-exec/some-commands
-      ("Projectile Switch Project" (*projectile-or-helm-projectile-fun*
-                                    'switch-project))
-      ("Projectile Test Current Project" (*projectile-or-helm-projectile-fun*
-                                          'test-project))
+      ("Projectile Switch Project"
+       (*projectile-or-helm-projectile-fun* 'switch-project))
+      ("Projectile Test Current Project"
+       (*projectile-or-helm-projectile-fun* 'test-project))
       ("Projectile Find File in Current Directory"
        (*projectile-or-helm-projectile-fun* 'find-file))
-      ("Projectile Search String" (*projectile-or-helm-projectile-fun*
-                                   'grep))
-      ("Projectile Open Version Controle" (*projectile-or-helm-projectile-fun*
-                                           'vc))
-      ("Projectile Open Dired" (*projectile-or-helm-projectile-fun*
-                                'dired))
-      ("Projectile Open Eshell" (*projectile-or-helm-projectile-fun*
-                                'run-eshell))
+      ("Projectile Search String"
+       (*projectile-or-helm-projectile-fun* 'grep))
+      ("Projectile Open Version Controle"
+       (*projectile-or-helm-projectile-fun* 'vc))
+      ("Projectile Open Dired"
+       (*projectile-or-helm-projectile-fun* 'dired))
+      ("Projectile Open Eshell"
+       (*projectile-or-helm-projectile-fun* 'run-eshell))
       ("Projectile Search and Replace String"
        (*projectile-or-helm-projectile-fun* 'replace))
       ("Projectile Search and Replace Regular Expression"
-       (*projectile-or-helm-projectile-fun*
-        'replace-regexp))
+       (*projectile-or-helm-projectile-fun* 'replace-regexp))
       ("Projectile Complie Project"
        (*projectile-or-helm-projectile-fun* 'compile-project))
       ("Projectile Discover Projects in Search Path"
@@ -57,6 +56,7 @@
       ("Projectile Discover Projects in Current Directory"
        '*projectile-discover-projects-in-current-directory*)
       ("Projectile Edit Dir Locale" 'projectile-edit-dir-locals)
+      ("Projectile Add Known Project" 'projectile-add-known-project)
       ("Projectile To Implementation or Test"
        'projectile-toggle-between-implementation-and-test)
       ("Projectile Run Install Commnad" 'projectile-install-project)
@@ -78,9 +78,10 @@
 (defun *projectile-or-helm-projectile-fun* (symb)
     "If has `helm-projectile-`+SYMB, then get its, else get `projectile-`+SYMB."
     (let* ((symb-name (symbol-name symb))
-           (projectile-symb (intern (s-prepend "projectile-" symb-name)))
-           (helm-projectile-symb (intern (s-prepend "helm-projectile-"
-                                                    symb-name))))
+           (projectile-symb
+            (intern (s-prepend "projectile-" symb-name)))
+           (helm-projectile-symb
+            (intern (s-prepend "helm-projectile-" symb-name))))
         (if (fboundp helm-projectile-symb)
             helm-projectile-symb
             projectile-symb)))
