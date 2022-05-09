@@ -30,7 +30,7 @@
 (defun fast-exec/define-deadgrep-keys ()
     "Define some useful \"keymaps\" for `deadgrep' and `fast-exec'."
     (fast-exec/some-commands
-     ("Search in Some Files" )))
+     ("Search in Some Files" 'deadgrep)))
 
 
 (provide 'fast-exec-deadgrep-keymaps)

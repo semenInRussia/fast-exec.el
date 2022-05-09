@@ -37,13 +37,23 @@ By default, for run `fast-exec/exec` you must press to `M-a` keymap, but you can
 
 By default, `fast-exec` contain only keymaps for vanila Emacs commands, but you can use very famous package, for example: projectile, magit. For some famous package `fast-exec` has built in support. Full list of supported packages:
 
+* package (built-in Emacs)
 * [Projectile](https://github.com/bbatsov/projectile)
 * [Yasnippet](https://github.com/joaotavora/yasnippet)
+* `agenda`
 * [Magit](https://github.com/magit/magit)
 * [Flycheck](https://www.flycheck.org/)
 * [Haskell Mode](https://github.com/haskell/haskell-mode) 
 * [skeletor](https://github.com/chrisbarrett/skeletor.el "this is cool package!")
 * [format-all](https://github.com/lassik/emacs-format-all-the-code "cool Package for Format Code in 50+ languages")
+* [wikinforg](https://github.com/progfolio/wikinforg "Package for Load
+  Org from Wiki")
+* [suggest](https://github.com/Wilfred/suggest.el "Coool Package for
+  Suggest Elisp Functions by In/Out")
+* [devdocs](https://github.com/astoff/devdocs.el "Read Docs from
+DevDocs in Emacs!")
+* `helm-wikipedia`
+* [deadgrep](https://github.com/Wilfred/deadgrep "Link to Repo of `deadgrep`")
 
 For enable this support, paste this code to your emacs' config.
 
