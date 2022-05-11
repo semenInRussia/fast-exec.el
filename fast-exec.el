@@ -343,7 +343,7 @@ updating any function `fast-exec/full-commands` set to nil, and all functions
 (require 'fast-exec-helm-wikipedia-keymaps)
 (require 'fast-exec-deadgrep-keymaps)
 (require 'fast-exec-org-agenda-keymaps)
-(require 'fast-exec-package)
+(require 'fast-exec-package-keymaps)
 
 (provide 'fast-exec)
 ;;; fast-exec.el ends here
