@@ -18,19 +18,24 @@ For get start paste folowed code to your Emacs init file:
 ```emacs-lisp
 
 (require 'fast-exec)
-(fast-exec/initialize)
 
 ```
 
 ## Usage
 
-By default, for run `fast-exec/exec` you must press to `M-a` keymap, but you can change this keymap (see below).
+By default, for run `fast-exec-exec` you must hit `M-x` and type
+`fast-exec-exec`, but you can bind it with any key binding
 
-`fast-exec/exec` is main function of `fast-exec.el`, it's view hints buffer, which contain some previouse command's word, letter and current command's name's word, you must:
+`fast-exec-exec` is the main function of `fast-exec.el`, after running
+it show buffer of hints, which show previous word of current sentence,
+letter, first letter of a current command word and variants of its
+word (one letter can demoted some words):
 
-* press on letter, which marked blue color for running command with corresponding name or if this is not ending word of command's name, then go to next step.
-* press `BACKSPACE` for go to backward command's name's word.
-* press `0` (`ZERO`) for exit from `fast-exec.el`.
+* hit letter, you can see it at buffer of hints, letter will be shown
+  with | around.  It will run command with corresponding name or if a
+  current word is not the final word of command's name, in its case
+  jump to next step, updating buffer of hints
+* press `0` (`ZERO`) for exit from buffer of hints
 
 
 ## Support of Very Famous Packages
@@ -62,86 +67,67 @@ For enable this support, paste this code to your emacs' config.
 ;                                |
 ;                                |
 ;                                |
-(fast-exec/enable-builtin-support projectile)
+(fast-exec-use-builtin-support projectile)
 ;;                               ^
 ;; This is enable only 1 support |
 
-(fast-exec/enable-some-builtin-supports projectile
-                                        yasnippet)
-;                                       ^
-;                                       |
-;                                       |
-;                                       |
+(fast-exec-use projectile
+               yasnippet)
+;             ^
+;             |
+;             |
+;             |
 ;            Change projectile and yasnippet
 ;            to other words from list of supported packages
 ```
 
 
-## Customization
+## Define Your Commands for Run Them with `fast-exec`
 
-### Customizate Keymap for call fast-exex/exec
+For defining commands (not binding) you must use the functions
+`fast-exec-make-command` and `fast-exec-make-some-commands`
 
-By default you must press `M-a` keymap for run `fast-exec/exec`, but you can change this keymap, for its set `fast-exec/keymap-prefix`. For example, folowed code:
+Function `fast-exec-make-command` take 2 arguments, first is sentence
+of command, its letters should be used when you run `fast-exec-exec`,
+second is command which will be evaluated after choosing it in buffer
+of hints
 
 ```emacs-lisp
-
-(setq fast-exec/keymap-prefix "M-l")
-
+(fast-exec-make-command "Call Foo" 'foo)
 ```
 
-### Define Keymaps
-
-For defining keymaps you must use functions `fast-exec/register-keymap-func` and `fast-exec/register-some-keymap-funcs`.
-
-Function `fast-exec/register-keymap-func` take 1 argument: function, this function must return list of `full-command`-s. Example:
-
-```emacs-lisp
-
-(fast-exec/register-keymap-func (lambda ()
-                                    (list (fast-exec/full-command "Call Foo" 'foo))))
-; About function `fast-exec/full-command` read text below!
-```
-
-
-Function `fast-exec/register-some-keymap-funcs` take infinity arguments, and do `fast-exec/register-keymap-func`, but add quote, Example:
+Function `fast-exec-make-some-command` take any number of arguments,
+and do `fast-exec-make-command`, but for some commands.  It take lists
+of lists from sentence of the command and function, they will be
+passed to `fast-exec-make-command` and result of each call will be
+returned with function `fast-exec-make-some-command` as list.  Example:
 
 ```emacs-lisp
-(fast-exec/register-some-keymap-funcs
-    foo
-    bar)
-```
-
-
-Note: I am not use for this situation basic list, because
-if user change mine list of keymaps, for valid updating
-"fast-exec/full-commands", user must delete your old keymaps' version,
-but if user and `fast-exec` use chain of functions, then after
-updating any function `fast-exec/full-commands` set to nil, and all
- functions call again.
-
-Full command is special type of `fast-exec.el`, which content understand don't required.
-
-For creating `full-command` you can use 2 folowed functions: `fast-exec/full-command` and `fast-exec-make-some-commands`. As you can predict, `fast-exec/full-command` create 1 command and `fast-exec-make-some-commands` create some commands.
-
-`fast-exec/full-command` take 2 arguments: name of command and command. `name` of command also it's letters which you canpress after call `fast-exec/exec` for call `command`. Be careful with case of words of `name`, words with first lower letter will ignore. `command` is interactive symbolic funtion's name. Example:
-
-```emacs-lisp
-
-(fast-exec/full-command "Call My the Function" 'my-function)
-;                       ^                       ^
-;                       |                       |
-;For call `my-function` press cmf               |
-;Word "the" is ignored, because                 |
-;first letter in lower case                     |
-                                        ;`my-function` is interactive func
-                                        ;Here used quote
-```
-
-`fast-exec-make-some-commands` take infinity arguments. This arguments is pairs of command and name, but also different from `fast-exec/full-command` is that function don't need to quote. Example:
-
-```emacs-lisp
-
 (fast-exec-make-some-commands
- ("Call Function Foo" 'foo)
- ("Call Function Bar" 'bar))
+ ("Pretty Print Buffer" 'pp-buffer)
+ ("Pretty Print Last Expression" 'pp-last-sexp))
+```
+
+OK, you can create commands, but why?
+
+For using them, you should return the macro `fast-exec-bind`.  It take
+2 arguments, first is name of binding (this very useful for unbinding
+and updating of bindings without an Emacs Reloading), second argument
+is body (like on body of `defun`), this body will be evaluated and
+used as list of `fast-exec-command` (you can create them with
+functions `fast-exec-make-command` and
+`fast-exec-make-some-commands`), so you can bind commands of `pp` with
+`fast-exec` using the following code
+
+```elisp
+(fast-exec-bind pp
+  (fast-exec-make-some-commands
+   ("Pretty Print Buffer" 'pp-buffer)
+   ("Pretty Print Last Expression" 'pp-last-sexp)))
+```
+
+For removing it binding, use the macro `fast-exec-unbind`:
+
+```elisp
+(fast-exec-unbind pp)
 ```
