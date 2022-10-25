@@ -26,15 +26,11 @@
 ;; ```
 ;;; Code:
 
-(defun fast-exec/define-magit-keys ()
-    "Define some useful \"keymaps\" for magit and `fast-exec.el`."
-    (interactive)
-
-    (fast-exec/some-commands
-     ("Open Magit Status" 'magit-status)
-     ("Open Magit Log" 'magit-log)
-     ("Magit Diff" 'magit-diff)))
-
+(fast-exec-bind magit
+  (fast-exec-make-some-commands
+   ("Git Status" 'magit-status)
+   ("Git Log"    'magit-log)
+   ("Git Diff"   'magit-diff)))
 
 (provide 'fast-exec-magit-keymaps)
 ;;; fast-exec-magit-keymaps.el ends here

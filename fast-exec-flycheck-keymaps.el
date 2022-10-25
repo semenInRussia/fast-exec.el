@@ -26,35 +26,26 @@
 ;; ```
 ;;; Code:
 
+(fast-exec-bind flycheck
+  (fast-exec-make-some-commands
+   ("Enable Flycheck" '*turn-on-flycheck*)
+   ("Disable Flycheck" '*turn-off-flycheck*)
+   ("Flycheck View List of Errors" 'flycheck-list-errors)
+   ("Flycheck Disable Checker" 'flycheck-disable-checker)
+   ("Flycheck Select Checker" 'flycheck-select-checker)
+   ("Flycheck Select Indication Mode" 'flycheck-set-indication-mode)
+   ("Flycheck Verify Checker" 'flycheck-verify-checker)
+   ("Flycheck Verify Setup" 'flycheck-verify-setup)))
 
 (defun *turn-on-flycheck* ()
-    "Turn On `flycheck` mode."
-    (interactive)
-    (flycheck-mode 38)
-    )
-
+  "Turn On `flycheck` mode."
+  (interactive)
+  (flycheck-mode 38))
 
 (defun *turn-off-flycheck* ()
-    "Turn off `flycheck` mode."
-    (interactive)
-    (flycheck-mode 0)
-    )
-
-
-(defun fast-exec/define-flycheck-keys ()
-    "Define some useful \"keymaps\" for flycheck and `fast-exec.el`."
-    (fast-exec/some-commands
-     ("Enable Flycheck" '*turn-on-flycheck*)
-     ("Disable Flycheck" '*turn-off-flycheck*)
-     ("Flycheck View List of Errors" 'flycheck-list-errors)
-     ("Flycheck Disable Checker" 'flycheck-disable-checker)
-     ("Flycheck Select Checker" 'flycheck-select-checker)
-     ("Flycheck Select Indication Mode" 'flycheck-set-indication-mode)
-     ("Flycheck Verify Checker" 'flycheck-verify-checker)
-     ("Flycheck Verify Setup" 'flycheck-verify-setup)
-     )
-    )
-
+  "Turn off `flycheck` mode."
+  (interactive)
+  (flycheck-mode 0))
 
 (provide 'fast-exec-flycheck-keymaps)
 ;;; fast-exec-flycheck-keymaps.el ends here

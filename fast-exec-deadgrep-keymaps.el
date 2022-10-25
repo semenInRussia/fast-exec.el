@@ -27,11 +27,8 @@
 ;;; Code:
 
 
-(defun fast-exec/define-deadgrep-keys ()
-    "Define some useful \"keymaps\" for `deadgrep' and `fast-exec'."
-    (fast-exec/some-commands
-     ("Search in Some Files" 'deadgrep)))
-
+(fast-exec-bind deadgrep
+  (fast-exec-make-some-commands ("Search in Some Files" 'deadgrep)))
 
 (provide 'fast-exec-deadgrep-keymaps)
 ;;; fast-exec-deadgrep-keymaps.el ends here

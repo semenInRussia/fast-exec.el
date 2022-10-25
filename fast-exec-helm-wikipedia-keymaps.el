@@ -26,11 +26,9 @@
 ;; ```
 ;;; Code:
 
-
-(defun fast-exec/define-helm-wikipedia-keys ()
-    "Define some useful \"keymaps\" for `helm-wikipedia' and `fast-exec.el`."
-    (fast-exec/some-commands
-     ("Search in Wikipedia" 'helm-wikipedia-suggest)))
+(fast-exec-bind helm-wikipedia
+  (fast-exec-make-some-commands
+   ("Search in Wikipedia" 'helm-wikipedia-suggest)))
 
 
 (provide 'fast-exec-helm-wikipedia-keymaps)

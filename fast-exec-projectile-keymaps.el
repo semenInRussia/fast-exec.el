@@ -27,65 +27,86 @@
 ;; ```
 ;;; Code:
 
-(defun fast-exec/define-projectile-keys ()
-    "Define some useful \"keymaps\" for projectile and `fast-exec.el`."
-    (-concat
-     (fast-exec/some-commands
-      ("Projectile Switch Project"
-       (*projectile-or-helm-projectile-fun* 'switch-project))
-      ("Projectile Test Current Project"
-       (*projectile-or-helm-projectile-fun* 'test-project))
-      ("Projectile Find File in Current Directory"
-       (*projectile-or-helm-projectile-fun* 'find-file))
-      ("Projectile Search String"
-       (*projectile-or-helm-projectile-fun* 'grep))
-      ("Projectile Open Version Controle"
-       (*projectile-or-helm-projectile-fun* 'vc))
-      ("Projectile Open Dired"
-       (*projectile-or-helm-projectile-fun* 'dired))
-      ("Projectile Open Eshell"
-       (*projectile-or-helm-projectile-fun* 'run-eshell))
-      ("Projectile Search and Replace String"
-       (*projectile-or-helm-projectile-fun* 'replace))
-      ("Projectile Search and Replace Regular Expression"
-       (*projectile-or-helm-projectile-fun* 'replace-regexp))
-      ("Projectile Complie Project"
-       (*projectile-or-helm-projectile-fun* 'compile-project))
-      ("Projectile Discover Projects in Search Path"
-       'projectile-discover-projects-in-search-path)
-      ("Projectile Discover Projects in Current Directory"
-       '*projectile-discover-projects-in-current-directory*)
-      ("Projectile Edit Dir Locale" 'projectile-edit-dir-locals)
-      ("Projectile Add Known Project" 'projectile-add-known-project)
-      ("Projectile To Implementation or Test"
-       'projectile-toggle-between-implementation-and-test)
-      ("Projectile Run Install Commnad" 'projectile-install-project)
-      ("Projectile Close All Files of Project" 'projectile-kill-buffers)
-      ("Projectile Run Command in Root" 'projectile-run-command-in-root)
-      ("Projectile Run Project" 'projectile-run-project))
-     (with-eval-after-load 'helm-projectile
-         (fast-exec/some-commands
-          ("Projectile Find File in Known Project"
-           'helm-projectile-find-file-in-known-projects)))))
-
+(defun fast-exec-projectile-toggle-caching ()
+  "Set `projectile-enable-caching' to opposite value."
+  (interactive)
+  (setq projectile-enable-caching (not projectile-enable-caching)))
 
 (defun *projectile-discover-projects-in-current-directory* ()
-    "Discover projectile's projects in directory of current open file."
-    (interactive)
-    (projectile-discover-projects-in-directory default-directory))
-
+  "Discover projectile's projects in directory of current open file."
+  (interactive)
+  (projectile-discover-projects-in-directory default-directory))
 
 (defun *projectile-or-helm-projectile-fun* (symb)
-    "If has `helm-projectile-`+SYMB, then get its, else get `projectile-`+SYMB."
-    (let* ((symb-name (symbol-name symb))
-           (projectile-symb
-            (intern (s-prepend "projectile-" symb-name)))
-           (helm-projectile-symb
-            (intern (s-prepend "helm-projectile-" symb-name))))
-        (if (fboundp helm-projectile-symb)
-            helm-projectile-symb
-            projectile-symb)))
+  "If has `helm-projectile-`+SYMB, then get its, else get `projectile-`+SYMB."
+  (let* ((symb-name (symbol-name symb))
+         (projectile-symb (intern (s-prepend "projectile-" symb-name)))
+         (helm-projectile-symb
+          (intern (s-prepend "helm-projectile-" symb-name))))
+    (if (fboundp helm-projectile-symb)
+        helm-projectile-symb
+      projectile-symb)))
 
+(fast-exec-bind projectile
+  (cons
+   (with-eval-after-load 'helm-projectile
+     (fast-exec-make-command
+      "Projectile Find File in Known Project"
+      'helm-projectile-find-file-in-known-projects))
+   (list
+    (fast-exec-make-command
+     "Projectile Switch Project"
+     (*projectile-or-helm-projectile-fun* 'switch-project))
+    (fast-exec-make-command
+     "Projectile Test Current Project"
+     (*projectile-or-helm-projectile-fun* 'test-project))
+    (fast-exec-make-command
+     "Projectile Find File in Current Directory"
+     (*projectile-or-helm-projectile-fun* 'find-file))
+    (fast-exec-make-command
+     "Projectile Search String"
+     (*projectile-or-helm-projectile-fun* 'grep))
+    (fast-exec-make-command
+     "Projectile Open Version Controle"
+     (*projectile-or-helm-projectile-fun* 'vc))
+    (fast-exec-make-command
+     "Projectile Open Dired"
+     (*projectile-or-helm-projectile-fun* 'dired))
+    (fast-exec-make-command
+     "Projectile Open Eshell"
+     (*projectile-or-helm-projectile-fun* 'run-eshell))
+    (fast-exec-make-command
+     "Projectile Search and Replace String"
+     (*projectile-or-helm-projectile-fun* 'replace))
+    (fast-exec-make-command
+     "Projectile Search and Replace Regular Expression"
+     (*projectile-or-helm-projectile-fun* 'replace-regexp))
+    (fast-exec-make-command
+     "Projectile Complie Project"
+     (*projectile-or-helm-projectile-fun* 'compile-project))
+    (fast-exec-make-command
+     "Projectile Discover Projects in Search Path"
+     'projectile-discover-projects-in-search-path)
+    (fast-exec-make-command
+     "Projectile Discover Projects in Current Directory"
+     '*projectile-discover-projects-in-current-directory*)
+    (fast-exec-make-command
+     "Projectile Edit Dir Locale" 'projectile-edit-dir-locals)
+    (fast-exec-make-command
+     "Projectile Add Known Project" 'projectile-add-known-project)
+    (fast-exec-make-command
+     "Projectile To Implementation or Test"
+     'projectile-toggle-between-implementation-and-test)
+    (fast-exec-make-command
+     "Projectile Run Install Commnad" 'projectile-install-project)
+    (fast-exec-make-command
+     "Projectile Close All Files of Project" 'projectile-kill-buffers)
+    (fast-exec-make-command
+     "Projectile Run Command in Root" 'projectile-run-command-in-root)
+    (fast-exec-make-command
+     "Projectile Run Project" 'projectile-run-project)
+    (fast-exec-make-command
+     "Projectile Toggle Cache" 'fast-exec-projectile-toggle-caching))))
 
 (provide 'fast-exec-projectile-keymaps)
 ;;; fast-exec-projectile-keymaps.el ends here

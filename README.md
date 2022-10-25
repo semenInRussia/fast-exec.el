@@ -121,7 +121,7 @@ updating any function `fast-exec/full-commands` set to nil, and all
 
 Full command is special type of `fast-exec.el`, which content understand don't required.
 
-For creating `full-command` you can use 2 folowed functions: `fast-exec/full-command` and `fast-exec/some-commands`. As you can predict, `fast-exec/full-command` create 1 command and `fast-exec/some-commands` create some commands.
+For creating `full-command` you can use 2 folowed functions: `fast-exec/full-command` and `fast-exec-make-some-commands`. As you can predict, `fast-exec/full-command` create 1 command and `fast-exec-make-some-commands` create some commands.
 
 `fast-exec/full-command` take 2 arguments: name of command and command. `name` of command also it's letters which you canpress after call `fast-exec/exec` for call `command`. Be careful with case of words of `name`, words with first lower letter will ignore. `command` is interactive symbolic funtion's name. Example:
 
@@ -137,11 +137,11 @@ For creating `full-command` you can use 2 folowed functions: `fast-exec/full-com
                                         ;Here used quote
 ```
 
-`fast-exec/some-commands` take infinity arguments. This arguments is pairs of command and name, but also different from `fast-exec/full-command` is that function don't need to quote. Example:
+`fast-exec-make-some-commands` take infinity arguments. This arguments is pairs of command and name, but also different from `fast-exec/full-command` is that function don't need to quote. Example:
 
 ```emacs-lisp
 
-(fast-exec/some-commands
+(fast-exec-make-some-commands
  ("Call Function Foo" 'foo)
  ("Call Function Bar" 'bar))
 ```

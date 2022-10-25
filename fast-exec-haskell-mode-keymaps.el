@@ -30,32 +30,27 @@
 ;; ```
 ;;; Code:
 
+(fast-exec-bind haskell-mode
+  (fast-exec-make-some-commands
+   ("Haskell Align Imports" 'haskell-align-imports)
+   ("Haskell Sort Imports" 'haskell-sort-imports)
+   ("Haskell Sort and Align Imports" '*haskell-align-and-sort-imports*)
+   ("Haskell Complie Program" 'haskell-compile)
+   ("Enable Haskell Documentation Mode" 'haskell-doc-mode)
+   ("Haskell Hoogle Lookup from Local" 'haskell-hoogle-lookup-from-local)
+   ("Haskell Hoogle Lookup from Web Site" 'haskell-hoogle-lookup-from-website)
+   ("Open Haskell REPL" 'run-haskell)
+   ("Open Haskell Menu" 'haskell-menu)
+   ("Haskell Change Session" 'haskell-session-change)
+   ("Haskell Kill Session" 'haskell-session-kill)
+   ("Haskell Show Type" 'haskell-mode-show-type-at)
+   ("Haskell Go To Imports" 'haskell-navigate-imports)))
+
 (defun *haskell-align-and-sort-imports* ()
-    "Composition of `haskell-sort-imports` and `haskell-align-imports`."
-    (interactive)
-    (haskell-align-imports)
-    (haskell-sort-imports)
-    )
-
-
-(defun fast-exec/define-haskell-mode-keys ()
-    "Define some useful \"keymaps\" for haskell-mode and `fast-exec.el`."
-    (fast-exec/some-commands
-     ("Haskell Align Imports" 'haskell-align-imports)
-     ("Haskell Sort Imports" 'haskell-sort-imports)
-     ("Haskell Sort and Align Imports" '*haskell-align-and-sort-imports*)
-     ("Haskell Complie Program" 'haskell-compile)
-     ("Enable Haskell Documentation Mode" 'haskell-doc-mode)
-     ("Haskell Hoogle Lookup from Local" 'haskell-hoogle-lookup-from-local)
-     ("Haskell Hoogle Lookup from Web Site" 'haskell-hoogle-lookup-from-website)
-     ("Open Haskell REPL" 'run-haskell)
-     ("Open Haskell Menu" 'haskell-menu)
-     ("Haskell Change Session" 'haskell-session-change)
-     ("Haskell Kill Session" 'haskell-session-kill)
-     ("Haskell Show Type" 'haskell-mode-show-type-at)
-     ("Haskell Go To Imports" 'haskell-navigate-imports)
-     ))
-
+  "Composition of `haskell-sort-imports' and `haskell-align-imports'."
+  (interactive)
+  (haskell-align-imports)
+  (haskell-sort-imports))
 
 (provide 'fast-exec-haskell-mode-keymaps)
 ;;; fast-exec-haskell-mode-keymaps.el ends here

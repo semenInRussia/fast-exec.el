@@ -26,9 +26,8 @@
 ;; ```
 ;;; Code:
 
-(defun fast-exec/define-package-keys ()
-  "Define some useful \"keymaps\" for `package' and `fast-exec'."
-  (fast-exec/some-commands
+(fast-exec-bind package
+  (fast-exec-make-some-commands
    ("Install Package" 'package-install)
    ("Delete Package" 'package-delete)
    ("Reinstall Package" 'package-reinstall)

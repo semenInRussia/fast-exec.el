@@ -1,4 +1,4 @@
-;;; fast-exec-format-all-keymaps --- Additional to fast-exec, define "keymaps" for format-all
+;;; fast-exec-devdocs-keymaps.el --- Additional to fast-exec, define "keymaps" for DevDocs
 ;; Copyright (C) 2021 Free Software Foundation, Inc.
 
 ;; Author: semenInRussia <hrams205@gmail.com>
@@ -19,19 +19,18 @@
 
 ;;; Commentary:
 ;; This package define some useful "keymaps" for `fast-exec.el`.
-;; Main function of this package is `fast-exec-define-format-all-keys`.
+;; Main function of this package is `fast-exec/define-devdocs-keys`.
 ;; For using this package, use folowed code of Emacs-Lisp:
-;; ```
-;; (fast-exec/register-keymap-func 'fast-exec-define-format-all-keys)
-;; ```
-
+;;
+;; (fast-exec/register-keymap-func 'fast-exec/define-devdocs-keys)
+;;
 ;;; Code:
 
-(fast-exec-bind format-all
+(fast-exec-bind devdocs
   (fast-exec-make-some-commands
-   ("Format Buffer" 'format-all-buffer)
-   ("Format Region" 'format-all-region)))
+   ("Install Docs from DevDocs" 'devdocs-install)
+   ("Delete Docs from DevDocs" 'devdocs-delete)
+   ("Lookup Docs from DevDocs" 'devdocs-lookup)))
 
-
-(provide 'fast-exec-format-all-keymaps)
-;;; fast-exec-format-all-keymaps.el ends here
+(provide 'fast-exec-devdocs-keymaps)
+;;; fast-exec-devdocs-keymaps.el ends here

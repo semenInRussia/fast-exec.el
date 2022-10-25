@@ -28,13 +28,8 @@
 ;;; Code:
 
 
-(defun fast-exec/define-suggest-keys ()
-    "Define some useful \"keymaps\" for `suggest' and `fast-exec.el`."
-    (fast-exec/some-commands
-     ("Suggest Elisp Functions" 'suggest)
-     )
-    )
-
+(fast-exec-bind suggest
+  (fast-exec-make-some-commands ("Suggest Elisp Functions" 'suggest)))
 
 (provide 'fast-exec-suggest-keymaps)
 ;;; fast-exec-suggest-keymaps.el ends here

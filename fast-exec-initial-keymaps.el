@@ -28,41 +28,73 @@
 
 (require 'fast-exec)
 
+(fast-exec-bind initial
+  (fast-exec-make-some-commands
+   ("Revert Buffer"              'revert-buffer)
+   ("Enable Auto Revert Mode"    'auto-revert-mode)
+   ("Save All Files"             'save-some-buffers)
+   ("Delete the Whole File's Content" '*delete-whole-file-content*)
+   ("Delete Current File"        '*delete-current-file*)
+   ("Rename Current File"        '*rename-current-file*)
+   ("Move Current File"          '*move-current-file*)
+   ("Indent Current File"        '*indent-current-file*)
+   ("Indent Selected Region"     'indent-region)
+   ("Search and Replace Regexp"  '*map-query-replace-regexp-in-whole-buffer*)
+   ("Enable Whitespace Mode"     '*enable-whitespace-mode*)
+   ("Disable Whitespace Mode"    '*disable-whitespace-mode*)
+   ("Delete Blank Lines"         '*delete-blank-lines*)
+   ("Delete Something"           'fast-exec/delete-something)
+   ("Delete Duplicated Lines"    'delete-duplicate-lines)
+   ("Delete Lines Contains"      'delete-matching-lines)
+   ("Delete Lines Not Contains"  'delete-non-matching-lines)
+   ("Kill Current Buffer"        '*kill-current-buffer*)
+   ("Transpose Words"            'transpose-words)
+   ("Transpose Regions"          'transpose-regions)
+   ("Transpose Lines"            'transpose-lines)
+   ("Transpose Sexps"            'transpose-sexps)
+   ("Convert Tabs to Spaces"     'untabify)
+   ("Check Parens"               'check-parens)
+   ("Align by Regular Expresion" 'align-regexp)
+   ("Open Eshell"                'eshell)
+   ("Open Ielm"                  'ielm)
+   ("Open Calculator"            'calc)
+   ("Unload Feature"             'unload-feature)
+   ("Load Theme"                 'load-theme)
+   ("Rename Current Buffer"      'rename-buffer)
+   ("Toggle Truncate Lines"      'toggle-truncate-lines)
+   ("Visual Line"                'visual-line-mode)
+   ("Fast Exec Reload"       'fast-exec-reload)
+   ("Open Regexp Builder"        'regexp-builder)
+   ("Move Something"             'fast-exec/move-something)))
 
 (defun *delete-whole-file-content* ()
   "Delete whole content of current open file/buffer."
   (interactive)
   (kill-region (point-min) (point-max)))
 
-
 (defun *delete-current-file* (delete-p)
   "If `DELETE-P`, Delete current file from FS and close its."
   (interactive
-   (let ((bname (or (buffer-file-name) "unitled")))
+   (let ((bname (buffer-file-name)))
      (list (y-or-n-p (s-lex-format "Delete file \"${bname}\" ? ")))))
-
   (when delete-p
-    (delete-file (buffer-name))
+    (delete-file (buffer-file-name))
     (kill-buffer (current-buffer))))
-
 
 (defun *kill-current-buffer* ()
   "Kill current open buffer."
   (interactive)
   (kill-buffer (current-buffer)))
 
-
 (defun *enable-whitespace-mode* ()
   "Enable `whitespace` mode."
   (interactive)
   (whitespace-mode 38))
 
-
 (defun *disable-whitespace-mode* ()
   "Disable `whitespace` mode."
   (interactive)
   (whitespace-mode 0))
-
 
 (defun *rename-current-file* (new-name)
   "Rename current open file to NEW-NAME."
@@ -79,7 +111,6 @@
     (find-file dest)
     (goto-char pos)))
 
-
 (defun *move-current-file* (destination-dir)
   "Move current open file to DESTINATION-DIR."
   (interactive "D")
@@ -91,7 +122,6 @@
     (kill-buffer)
     (find-file destination-file)
     (goto-char pos)))
-
 
 (defun fast-exec/move-something (source destination)
   "Move SOURCE to DESTINATION, source may be wildcard regexp.
@@ -105,12 +135,19 @@ Examples of SOURCE: *.docx, cool.tex"
       (rename-file it destination)
       (message "File %s moved!" (f-filename it)))))
 
+(defun fast-exec/delete-something (files-regexp)
+  "Move files which match with FILES-REGEXP - wildcard regexp.
+Examples of FILES-REGEXP: *.docx, cool.tex"
+  (interactive "sWhat delete?: ")
+  (let* ((files (file-expand-wildcards files-regexp)))
+    (--each files
+      (f-delete it)
+      (message "File %s deleted!" (f-filename it)))))
 
 (defun *indent-current-file* ()
   "Indent all content of current file."
   (interactive)
   (indent-region-line-by-line (point-min) (point-max)))
-
 
 (defun *delete-blank-lines* ()
   "Delete all newline around cursor.
@@ -131,49 +168,6 @@ wrapping around from the last such string to the first."
   (save-excursion
     (beginning-of-buffer)
     (call-interactively 'map-query-replace-regexp)))
-
-
-(defun fast-exec/define-standard-keys ()
-  "Define some useful \"keymaps\" for `fast-exec.el`."
-  (interactive)
-  (fast-exec/some-commands
-   ("Revert Buffer"              'revert-buffer)
-   ("Enable Auto Revert Mode"    'auto-revert-mode)
-   ("Save All Files"             'save-some-buffers)
-   ("Delete the Whole File's Content" '*delete-whole-file-content*)
-   ("Delete Current File"        '*delete-current-file*)
-   ("Rename Current File"        '*rename-current-file*)
-   ("Move Current File"          '*move-current-file*)
-   ("Indent Current File"        '*indent-current-file*)
-   ("Indent Selected Region"     'indent-region)
-   ("Search and Replace Regexp"  '*map-query-replace-regexp-in-whole-buffer*)
-   ("Enable Whitespace Mode"     '*enable-whitespace-mode*)
-   ("Disable Whitespace Mode"    '*disable-whitespace-mode*)
-   ("Delete Blank Lines"         '*delete-blank-lines*)
-   ("Delete Duplicated Lines"    'delete-duplicate-lines)
-   ("Delete Lines Contains"      'delete-matching-lines)
-   ("Delete Lines Not Contains"  'delete-non-matching-lines)
-   ("Kill Current Buffer"        '*kill-current-buffer*)
-   ("Transpose Words"            'transpose-words)
-   ("Transpose Regions"          'transpose-regions)
-   ("Transpose Lines"            'transpose-lines)
-   ("Transpose Sexps"            'transpose-sexps)
-   ("Convert Tabs to Spaces"     'untabify)
-   ("Check Parens"               'check-parens)
-   ("Align by Regular Expresion" 'align-regexp)
-   ("Open Eshell"                'eshell)
-   ("Open Ielm"                  'ielm)
-   ("Open Calculator"            'calc)
-   ("Unload Feature"             'unload-feature)
-   ("Load Theme"                 'load-theme)
-   ("Rename Current Buffer"      'rename-buffer)
-   ("Toggle Truncate Lines"      'toggle-truncate-lines)
-   ("Visual Line"                'visual-line-mode)
-   ("Fast Exec Initialize"       'fast-exec/initialize)
-   ("Open Regexp Builder"        'regexp-builder)
-   ("Move Something"             'fast-exec/move-something)))
-
-
 
 (provide 'fast-exec-initial-keymaps)
 ;;; fast-exec-initial-keymaps.el ends here
