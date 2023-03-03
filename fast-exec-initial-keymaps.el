@@ -166,7 +166,7 @@ each successive replacement uses the next successive replacement string,
 wrapping around from the last such string to the first."
   (interactive)
   (save-excursion
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (call-interactively 'map-query-replace-regexp)))
 
 (provide 'fast-exec-initial-keymaps)
