@@ -26,7 +26,7 @@
 ;;
 ;;; Code:
 
-(fast-exec-bind devdocs
+(fast-exec-bind 'devdocs
   (fast-exec-make-some-commands
    ("Install Docs from DevDocs" 'devdocs-install)
    ("Delete Docs from DevDocs" 'devdocs-delete)

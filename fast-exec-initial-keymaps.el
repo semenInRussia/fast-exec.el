@@ -28,7 +28,7 @@
 
 (require 'fast-exec)
 
-(fast-exec-bind initial
+(fast-exec-bind 'initial
   (fast-exec-make-some-commands
    ("Revert Buffer"              'revert-buffer)
    ("Enable Auto Revert Mode"    'auto-revert-mode)

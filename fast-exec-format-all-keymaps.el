@@ -27,7 +27,7 @@
 
 ;;; Code:
 
-(fast-exec-bind format-all
+(fast-exec-bind 'format-all
   (fast-exec-make-some-commands
    ("Format Buffer" 'format-all-buffer)
    ("Format Region" 'format-all-region)))

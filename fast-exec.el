@@ -4,7 +4,7 @@
 
 ;; Author: semenInRussia <hrams205@gmail.com>
 ;; Version: 0.1
-;; Package-Requires: ((dash "2.18.0") (s "1.12.0"))
+;; Package-Requires: ((emacs "25.1") (dash "2.18.0") (s "1.12.0"))
 ;; Homepage: https://github.com/semeninrussia/fast-exec.el
 
 ;; This program is free software: you can redistribute it and/or modify
@@ -25,6 +25,11 @@
 ;; Fast execution of the commands.
 
 ;;; Code:
+
+(require 'dash)
+(require 's)
+
+(require 'cl-lib)
 
 (defgroup fast-exec nil
   "Fast execution of the commands."
@@ -116,6 +121,7 @@ symbol as an second item"
 (defun fast-exec-exec ()
   "Main command of the `fast-exec'."
   (interactive)
+  (fast-exec-reload)
   (fast-exec--exec-from-step))
 
 (defun fast-exec--exec-from-step (&optional commands step)
@@ -209,14 +215,10 @@ STEP defaults to zero"
      (s-join " | " next-words))))
 
 (defmacro fast-exec-bind (id &rest body)
-  "Bind `fast-exec-commands' evalueted from BODY with a symbol (unquoted) ID."
+  "Bind `fast-exec-commands' evalueted from BODY with a symbol ID with quote."
   (declare (indent 1))
   (interactive)
-  `(progn
-     (puthash ',id
-              (progn ,@body)
-              fast-exec--commands-bindings)
-     (fast-exec-reload)))
+  `(progn (puthash ,id (progn ,@body) fast-exec--commands-bindings)))
 
 (defmacro fast-exec-unbind (id)
   "Remove binding of `fast-exec-command' at a symbol (unquoted) ID."

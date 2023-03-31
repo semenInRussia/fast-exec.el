@@ -26,7 +26,7 @@
 ;; ```
 ;;; Code:
 
-(fast-exec-bind flycheck
+(fast-exec-bind 'flycheck
   (fast-exec-make-some-commands
    ("Enable Flycheck" '*turn-on-flycheck*)
    ("Disable Flycheck" '*turn-off-flycheck*)

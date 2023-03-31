@@ -30,7 +30,7 @@
 ;; ```
 ;;; Code:
 
-(fast-exec-bind haskell-mode
+(fast-exec-bind 'haskell-mode
   (fast-exec-make-some-commands
    ("Haskell Align Imports" 'haskell-align-imports)
    ("Haskell Sort Imports" 'haskell-sort-imports)

@@ -26,7 +26,7 @@
 ;; ```
 ;;; Code:
 
-(fast-exec-bind helm-wikipedia
+(fast-exec-bind 'helm-wikipedia
   (fast-exec-make-some-commands
    ("Search in Wikipedia" 'helm-wikipedia-suggest)))
 

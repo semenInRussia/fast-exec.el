@@ -26,7 +26,7 @@
 ;; ```
 ;;; Code:
 
-(fast-exec-bind yasnippet
+(fast-exec-bind 'yasnippet
   (fast-exec-make-some-commands
    ("Yasnippet New Snippet" 'yas-new-snippet)
    ("Yasnippet Visit Snippet" 'yas-visit-snippet-file)

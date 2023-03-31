@@ -47,7 +47,7 @@
         helm-projectile-symb
       projectile-symb)))
 
-(fast-exec-bind projectile
+(fast-exec-bind 'projectile
   (cons
    (with-eval-after-load 'helm-projectile
      (fast-exec-make-command

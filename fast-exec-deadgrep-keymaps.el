@@ -25,9 +25,9 @@
 ;; (fast-exec/register-keymap-func 'fast-exec/define-deadgrep-keys)
 ;; ```
 ;;; Code:
+(require 'fast-exec)
 
-
-(fast-exec-bind deadgrep
+(fast-exec-bind 'deadgrep
   (fast-exec-make-some-commands ("Search in Some Files" 'deadgrep)))
 
 (provide 'fast-exec-deadgrep-keymaps)

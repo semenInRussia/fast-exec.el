@@ -26,7 +26,7 @@
 ;; ```
 ;;; Code:
 
-(fast-exec-bind package
+(fast-exec-bind 'package
   (fast-exec-make-some-commands
    ("Install Package" 'package-install)
    ("Delete Package" 'package-delete)

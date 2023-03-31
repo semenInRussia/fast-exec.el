@@ -28,7 +28,7 @@
 ;;; Code:
 
 
-(fast-exec-bind suggest
+(fast-exec-bind 'suggest
   (fast-exec-make-some-commands ("Suggest Elisp Functions" 'suggest)))
 
 (provide 'fast-exec-suggest-keymaps)

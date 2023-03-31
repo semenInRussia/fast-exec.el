@@ -26,7 +26,7 @@
 ;; ```
 ;;; Code:
 
-(fast-exec-bind magit
+(fast-exec-bind 'magit
   (fast-exec-make-some-commands
    ("Git Status" 'magit-status)
    ("Git Log"    'magit-log)

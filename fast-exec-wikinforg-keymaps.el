@@ -27,7 +27,7 @@
 ;; ```
 ;;; Code:
 
-(fast-exec-bind wikinforg
+(fast-exec-bind 'wikinforg
   (fast-exec-make-some-commands ("Load Org from Wiki" 'wikinforg)))
 
 (provide 'fast-exec-wikinforg-keymaps)
