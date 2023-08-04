@@ -27,6 +27,7 @@
 ;;; Code:
 
 (require 'fast-exec)
+(require 'f)
 
 (fast-exec-bind 'initial
   (fast-exec-make-some-commands
@@ -48,10 +49,6 @@
    ("Delete Lines Contains"      'delete-matching-lines)
    ("Delete Lines Not Contains"  'delete-non-matching-lines)
    ("Kill Current Buffer"        '*kill-current-buffer*)
-   ("Transpose Words"            'transpose-words)
-   ("Transpose Regions"          'transpose-regions)
-   ("Transpose Lines"            'transpose-lines)
-   ("Transpose Sexps"            'transpose-sexps)
    ("Convert Tabs to Spaces"     'untabify)
    ("Check Parens"               'check-parens)
    ("Align by Regular Expresion" 'align-regexp)

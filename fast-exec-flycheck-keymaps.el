@@ -26,6 +26,8 @@
 ;; ```
 ;;; Code:
 
+(declare-function flycheck-mode "flycheck.el")
+
 (fast-exec-bind 'flycheck
   (fast-exec-make-some-commands
    ("Enable Flycheck" '*turn-on-flycheck*)

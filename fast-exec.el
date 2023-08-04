@@ -28,6 +28,7 @@
 
 (require 'dash)
 (require 's)
+(require 'eieio)
 
 (require 'cl-lib)
 
@@ -42,6 +43,11 @@
 (defvar fast-exec-commands nil
   "Instances of the `fast-exec-command' which will be handled at start.")
 
+(defvar fast-exec-hint-buffer-mode-hook nil
+  "Hook that will be called before view hint buffer.")
+
+;; (fast-exec-exec)
+
 (defcustom fast-exec-buffer-parent-keymap
   (let ((map (make-sparse-keymap)))
     (define-key map "0" 'fast-exec-hide-commands-buffer)
@@ -54,11 +60,12 @@
   '((t (:foreground "#6495ed")))        ; CornflowerBlue
   "Face for char indicates a key for call command in `fast-exec' buffer.")
 
-(defclass fast-exec-command ()
-  ((words :initarg :words :accessor fast-exec-command-words)
-   (chars :initarg :chars :accessor fast-exec-command-chars)
-   (command :initarg :command :accessor fast-exec-command-command))
-  "A command for the `fast-exec'.")
+(unless (boundp 'fast-exec-command)
+  (defclass fast-exec-command ()
+    ((words :initarg :words :accessor fast-exec-command-words)
+     (chars :initarg :chars :accessor fast-exec-command-chars)
+     (command :initarg :command :accessor fast-exec-command-command))
+    "A command for the `fast-exec'."))
 
 (defun fast-exec-make-command (name command)
   "Make a instance of the `fast-exec-command'.
@@ -90,33 +97,32 @@ symbol as an second item"
   (let ((first-char (string-to-char s)))
     (= (upcase first-char) first-char)))
 
-(cl-defmethod fast-exec-command-char ((self fast-exec-command)
-                                      &optional n)
-  "Get N -th char of an `fast-exec-command' instance SELF."
+(defun fast-exec-command-char (self
+                               &optional n)
+  "Get N -th char of an `fast-exec-command' instance CMD."
   (or n (setq n 0))
   (downcase (nth n (fast-exec-command-chars self))))
 
-(cl-defmethod fast-exec-command-key ((self fast-exec-command)
+(defun fast-exec-command-key (cmd
+                              &optional n)
+  "Get N -th keybinding of an `fast-exec-command' instance CMD."
+  (or n (setq n 0))
+  (char-to-string (fast-exec-command-char cmd n)))
+
+(defun fast-exec-command-word (cmd &optional n)
+  "Get N -th word of an `fast-exec-command' instance CMD."
+  (or n (setq n 0))
+  (nth n (fast-exec-command-words cmd)))
+
+(defun fast-exec-command-rest-words (cmd
                                      &optional n)
-  "Get N -th keybinding of an `fast-exec-command' instance SELF."
+  "Get rest words of CMD `fast-exec-command' name for step N."
   (or n (setq n 0))
-  (char-to-string (fast-exec-command-char self n)))
+  (-slice (fast-exec-command-words cmd) n))
 
-(cl-defmethod fast-exec-command-word ((self fast-exec-command)
-                                      &optional n)
-  "Get N -th word of an `fast-exec-command' instance SELF."
-  (or n (setq n 0))
-  (nth n (fast-exec-command-words self)))
-
-(cl-defmethod fast-exec-command-rest-words ((self fast-exec-command)
-                                            &optional n)
-  "Get rest words of SELF `fast-exec-command' name for step N."
-  (or n (setq n 0))
-  (-slice (fast-exec-command-words self) n))
-
-(cl-defmethod fast-exec-command-call ((self fast-exec-command))
-  "Call command of the SELF (a `fast-exec-command' instance)."
-  (call-interactively (fast-exec-command-command self)))
+(defun fast-exec-command-call (cmd)
+  "Call command of the CMD (a `fast-exec-command' instance)."
+  (call-interactively (fast-exec-command-command cmd)))
 
 (defun fast-exec-exec ()
   "Main command of the `fast-exec'."
@@ -183,8 +189,9 @@ N defaults to 0, CHAR defaults to last pressed character."
   "View hints for `fast-exec-command' COMMANDS with STEP in special buffer."
   (let ((buffer (get-buffer-create "*fast-exec*")))
     (with-current-buffer buffer
+      (run-hooks 'fast-exec-hint-buffer-mode-hook)
       (erase-buffer)
-      (toggle-truncate-lines t)
+      (setq-local truncate-lines t)
       (--each
           (--group-by (fast-exec-command-char it step) commands)
         (fast-exec-view-commands-char (car it) (cdr it) step)
@@ -198,7 +205,7 @@ N defaults to 0, CHAR defaults to last pressed character."
 (defun fast-exec-view-commands-char (char commands &optional step)
   "View a group of `fast-exec-command' COMMANDS grouped by N -th CHAR.
 
-STEP defaults to zero"
+  STEP defaults to zero"
   (or step (setq step 1))
   (let ((prev-words
          (delete-dups
@@ -217,18 +224,16 @@ STEP defaults to zero"
 (defmacro fast-exec-bind (id &rest body)
   "Bind `fast-exec-commands' evalueted from BODY with a symbol ID with quote."
   (declare (indent 1))
-  (interactive)
   `(progn (puthash ,id (progn ,@body) fast-exec--commands-bindings)))
 
 (defmacro fast-exec-unbind (id)
   "Remove binding of `fast-exec-command' at a symbol (unquoted) ID."
-  (interactive)
   `(remhash ',id fast-exec--commands-bindings))
 
 (defun fast-exec-reload ()
   "Reload `fast-exec-commands' depends on `fast-exec--keymap-functions'.
 
-See `fast-exec-register-function' for change `fast-exec--keymap-functions'"
+  See `fast-exec-register-function' for change `fast-exec--keymap-functions'"
   (interactive)
   (setq fast-exec-commands nil)
   (maphash
@@ -244,6 +249,11 @@ See `fast-exec-register-function' for change `fast-exec--keymap-functions'"
 (defmacro fast-exec-use (&rest modules)
   "Use built-in support each of MODULES for `fast-exec'."
   (cons 'progn (--map `(fast-exec-use-builtin-support ',it) modules)))
+
+;;; the following code fixes error of the recursive import
+;; (`fast-exec-initial-keymaps' require `fast-exec')
+(with-eval-after-load 'fast-exec
+  (require 'fast-exec-initial-keymaps))
 
 (provide 'fast-exec)
 ;;; fast-exec.el ends here
