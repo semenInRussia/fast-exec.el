@@ -28,6 +28,8 @@
 
 ;;; Code:
 
+;; (eval-and-compile (require 'fast-exec))
+
 (fast-exec-bind 'skeletor
   (fast-exec-make-some-commands
    ("New Project" 'skeletor-create-project)))

@@ -46,8 +46,6 @@
 (defvar fast-exec-hint-buffer-mode-hook nil
   "Hook that will be called before view hint buffer.")
 
-;; (fast-exec-exec)
-
 (defcustom fast-exec-buffer-parent-keymap
   (let ((map (make-sparse-keymap)))
     (define-key map "0" 'fast-exec-hide-commands-buffer)
@@ -60,12 +58,11 @@
   '((t (:foreground "#6495ed")))        ; CornflowerBlue
   "Face for char indicates a key for call command in `fast-exec' buffer.")
 
-(unless (boundp 'fast-exec-command)
-  (defclass fast-exec-command ()
-    ((words :initarg :words :accessor fast-exec-command-words)
-     (chars :initarg :chars :accessor fast-exec-command-chars)
-     (command :initarg :command :accessor fast-exec-command-command))
-    "A command for the `fast-exec'."))
+(defclass fast-exec-command ()
+  ((words :initarg :words :accessor fast-exec-command-words)
+   (chars :initarg :chars :accessor fast-exec-command-chars)
+   (command :initarg :command :accessor fast-exec-command-command))
+  "A command for the `fast-exec'.")
 
 (defun fast-exec-make-command (name command)
   "Make a instance of the `fast-exec-command'.
@@ -99,7 +96,7 @@ symbol as an second item"
 
 (defun fast-exec-command-char (self
                                &optional n)
-  "Get N -th char of an `fast-exec-command' instance CMD."
+  "Get N -th char of an `fast-exec-command' instance ."
   (or n (setq n 0))
   (downcase (nth n (fast-exec-command-chars self))))
 

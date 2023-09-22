@@ -26,6 +26,8 @@
 ;;
 ;;; Code:
 
+;; (eval-and-compile (require 'fast-exec))
+
 (fast-exec-bind 'devdocs
   (fast-exec-make-some-commands
    ("Install Docs from DevDocs" 'devdocs-install)

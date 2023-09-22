@@ -27,7 +27,7 @@
 ;; ```
 ;;; Code:
 
-(require 'fast-exec)
+;; (eval-and-compile (require 'fast-exec))
 
 (defun fast-exec-projectile-toggle-caching ()
   "Set `projectile-enable-caching' to opposite value."

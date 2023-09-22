@@ -27,6 +27,8 @@
 ;; ```
 ;;; Code:
 
+;; (eval-and-compile (require 'fast-exec))
+
 
 (fast-exec-bind 'suggest
   (fast-exec-make-some-commands ("Suggest Elisp Functions" 'suggest)))

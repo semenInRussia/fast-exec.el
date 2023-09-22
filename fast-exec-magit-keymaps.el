@@ -26,6 +26,8 @@
 ;; ```
 ;;; Code:
 
+;; (eval-and-compile (require 'fast-exec))
+
 (fast-exec-bind 'magit
   (fast-exec-make-some-commands
    ("Git Status" 'magit-status)

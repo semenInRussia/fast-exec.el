@@ -26,6 +26,8 @@
 ;; ```
 ;;; Code:
 
+;; (eval-and-compile (require 'fast-exec))
+
 (fast-exec-bind 'package
   (fast-exec-make-some-commands
    ("Install Package" 'package-install)

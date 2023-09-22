@@ -30,6 +30,8 @@
 ;; ```
 ;;; Code:
 
+;; (eval-and-compile (require 'fast-exec))
+
 (fast-exec-bind 'haskell-mode
   (fast-exec-make-some-commands
    ("Haskell Align Imports" 'haskell-align-imports)

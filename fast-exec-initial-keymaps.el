@@ -26,7 +26,7 @@
 
 ;;; Code:
 
-(require 'fast-exec)
+;; (require 'fast-exec)
 (require 'f)
 
 (fast-exec-bind 'initial

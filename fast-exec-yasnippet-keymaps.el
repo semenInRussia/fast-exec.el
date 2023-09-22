@@ -26,6 +26,8 @@
 ;; ```
 ;;; Code:
 
+;; (eval-and-compile (require 'fast-exec))
+
 (fast-exec-bind 'yasnippet
   (fast-exec-make-some-commands
    ("Yasnippet New Snippet" 'yas-new-snippet)

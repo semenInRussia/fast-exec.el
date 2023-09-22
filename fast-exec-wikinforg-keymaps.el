@@ -27,6 +27,8 @@
 ;; ```
 ;;; Code:
 
+;; (eval-and-compile (require 'fast-exec))
+
 (fast-exec-bind 'wikinforg
   (fast-exec-make-some-commands ("Load Org from Wiki" 'wikinforg)))
 
